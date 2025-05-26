@@ -1,0 +1,23 @@
+name: Validate PR target
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+jobs:
+  check-target:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch pairing
+        run: |
+          echo "HEAD=${{ github.head_ref }}  BASE=${{ github.base_ref }}"
+          # feature / bugfix  ▶︎ develop
+          if [[ "${{ github.head_ref }}" =~ ^(feature|bugfix)/ ]] && \
+             [[ "${{ github.base_ref }}" != "develop" ]]; then
+            echo "::error::feature/bugfix 브랜치는 develop 으로만 PR 가능"
+            exit 1
+          fi
+          # develop / hotfix  ▶︎ main
+          if [[ "${{ github.head_ref }}" =~ ^(develop|hotfix)(/.*)?$ ]] && \
+             [[ "${{ github.base_ref }}" != "main" ]]; then
+            echo "::error::develop·hotfix 브랜치는 main 으로만 PR 가능"
+            exit 1
+          fi
