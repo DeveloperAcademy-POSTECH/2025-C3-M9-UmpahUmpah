@@ -1,0 +1,24 @@
+{
+  "name": "2025-c3-m9-umpahumpah",
+  "version": "1.0.0",
+  "description": "--- marp: true theme: default paginate: true ---",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeveloperAcademy-POSTECH/2025-C3-M9-UmpahUmpah.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DeveloperAcademy-POSTECH/2025-C3-M9-UmpahUmpah/issues"
+  },
+  "homepage": "https://github.com/DeveloperAcademy-POSTECH/2025-C3-M9-UmpahUmpah#readme",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
