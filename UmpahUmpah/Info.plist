@@ -6,5 +6,9 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>건강 정보 업데이트 때문에 앱에 대한 권한 요청을 합니다.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>건강 정보 공유 때문에 앱에 대한 권한을 요청합니다.</string>
 </dict>
 </plist>
