@@ -32,6 +32,11 @@ struct ContentView: View {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink(destination: SettingView()) {
+                        Image(systemName: "gearshape")
+                    }
+                }
             }
         } detail: {
             Text("Select an item")
