@@ -1,8 +1,16 @@
-//
-//  RoundedCorner.swift
-//  UmpahUmpah
-//
-//  Created by eunsoo on 6/4/25.
-//
+import SwiftUI
 
-import Foundation
+// 커스텀 Shape
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
+    }
+}

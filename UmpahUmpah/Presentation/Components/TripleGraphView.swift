@@ -1,24 +1,13 @@
-//
-//  MainGraph.swift
-//  UmpahUmpah
-//
-//  Created by eunsoo on 6/2/25.
-//
-
 import SwiftUI
 
 struct TripleGraphView: View {
-    var firstValue: Double = 1.0
-    var secondValue: Double = 0.6
-    var thirdValue: Double = 0.3
+    let firstValueName: String = "스트로크 효율성"
+    let secondValueName: String = "안정지수"
+    let thirdValueName: String = "몰입도"
     
-    var firstValueText: String = "100"
-    var secondValueText: String = "60"
-    var thirdValueText: String = "30"
-    
-    var firstValueName: String = "스트로크 효율성"
-    var secondValueName: String = "안정지수"
-    var thirdValueName: String = "몰입도"
+    var strokeEfficiency: Double = 1.0
+    var stability: Double = 0.6
+    var immersionLevel: Double = 0.3
     
     var body: some View {
         
@@ -28,10 +17,10 @@ struct TripleGraphView: View {
                     ZStack(alignment: .leading){
                         Rectangle()
                             .fill(Color.mint)
-                            .frame(width: CGFloat(firstValue) * 200, height: 32)
+                            .frame(width: CGFloat(strokeEfficiency) * 200, height: 32)
                             .cornerRadius(10, corners: [.topRight, .bottomRight])
                         
-                        Text(firstValueText)
+                        Text("\(Int(Double(strokeEfficiency) * 100))")
                             .font(.headline)
                             .fontWeight(.heavy)
                             .foregroundStyle(.white)
@@ -46,10 +35,10 @@ struct TripleGraphView: View {
                     ZStack(alignment: .leading){
                         Rectangle()
                             .fill(Color.blue)
-                            .frame(width: CGFloat(secondValue) * 200, height: 32)
+                            .frame(width: CGFloat(stability) * 200, height: 32)
                             .cornerRadius(10, corners: [.topRight, .bottomRight])
                         
-                        Text(secondValueText)
+                        Text("\(Int(Double(stability) * 100))")
                             .font(.headline)
                             .fontWeight(.heavy)
                             .foregroundStyle(.white)
@@ -65,10 +54,10 @@ struct TripleGraphView: View {
                     ZStack(alignment: .leading){
                         Rectangle()
                             .fill(Color.purple)
-                            .frame(width: CGFloat(thirdValue) * 200, height: 32)
+                            .frame(width: CGFloat(immersionLevel) * 200, height: 32)
                             .cornerRadius(10, corners: [.topRight, .bottomRight])
                         
-                        Text(thirdValueText)
+                        Text("\(Int(Double(immersionLevel) * 100))")
                             .font(.headline)
                             .fontWeight(.heavy)
                             .foregroundStyle(.white)
