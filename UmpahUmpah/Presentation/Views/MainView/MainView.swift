@@ -23,47 +23,14 @@ let mockMetrics: [StrokeMetric] = [
 let maxMetricValue = mockMetrics.map { $0.value }.max() ?? 100
 
 struct MainView: View {
+    @StateObject private var viewModel = MainViewModel()
+    
     var body: some View {
         VStack(spacing: 0) {
             // MARK: Header Section
             
-            VStack(alignment: .leading, spacing: 0) {
-                Text("2025.06.15.")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(Color.white)
-                    .padding(.top, 10)
-                    .padding(.horizontal, 16)
-                
-                Text("오늘도, 음파음파")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(Color.white)
-                    .padding(.top, 10)
-                    .padding(.horizontal, 16)
-            }
-            .padding(.bottom, 18)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.brand)
-            
-            // MARK: Weekly Calender Section
-            
-            HStack(spacing: 0) {
-                ForEach(0 ..< 7) { index in
-                    VStack(spacing: 10) {
-                        Text(["월", "화", "수", "목", "금", "토", "일"][index])
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(Color.white)
-                        
-                        Text("\([9, 10, 11, 12, 13, 14, 15][index])")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(Color.white)
-                    }
-                    .padding(.horizontal, 17)
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 18)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .background(Color.brand)
+            HeaderSectionView()
+            WeeklyCalendarView(viewModel: viewModel)
             
             // MARK: UmpahGoritihm Chart Section
             
