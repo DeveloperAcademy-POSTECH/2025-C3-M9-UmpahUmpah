@@ -2,21 +2,18 @@ import SwiftUI
 
 struct MainTabView: View {
     var body: some View {
-        TabView{
-            Text("VSView")
+        TabView {
+            Text("비교")
                 .tabItem {
-                    Image(systemName: "arrow.left.arrow.right.circle")
-                    Text("비교")
+                    Label("비교", systemImage: "arrow.left.arrow.right.circle")
                 }
-            Text("MainView")
+            MainView()
                 .tabItem {
-                    Image(systemName: "house")
-                    Text("메인")
+                    Label("메인", systemImage: "house")
                 }
-            Text("SettingView")
+            SettingView()
                 .tabItem {
-                    Image(systemName: "gear")
-                    Text("설정")
+                    Label("설정", systemImage: "gear")
                 }
         }
     }
