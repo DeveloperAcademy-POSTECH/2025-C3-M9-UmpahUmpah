@@ -47,3 +47,4 @@ final class MainViewModel: ObservableObject {
         return daysOfWeek[index]
     }
 }
+
