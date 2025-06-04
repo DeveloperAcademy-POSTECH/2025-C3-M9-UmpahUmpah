@@ -29,6 +29,7 @@ struct MainView: View {
         VStack(spacing: 0) {
             // MARK: Header Section
             
+            
             HeaderSectionView()
             WeeklyCalendarView(viewModel: viewModel)
             
