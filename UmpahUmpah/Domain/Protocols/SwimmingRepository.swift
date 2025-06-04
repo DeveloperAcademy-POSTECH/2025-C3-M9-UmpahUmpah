@@ -11,4 +11,6 @@ protocol SwimmingRepository {
 //    func fetchSwimmingWorkouts(start: Date, end: Date) async throws -> [SwimmingWorkout]
     func fetchSwimmingWorkouts(start: Date, end: Date, strokeType: SwimmingStrokeType?) async throws -> [SwimmingWorkout]
     func fetchAverageHeartRate(start: Date, end: Date) async throws -> Double?
+    func fetchHeartRateSamples(start: Date, end: Date) async throws -> [HeartRateSample]
+
 }
