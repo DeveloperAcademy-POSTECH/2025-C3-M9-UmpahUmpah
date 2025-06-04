@@ -10,6 +10,9 @@ import SwiftUI
 
 @main
 struct UmpahUmpahApp: App {
+    @StateObject private var mainViewModel = MainViewModel()
+    @StateObject private var chartViewModel = ChartViewModel()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,9 +28,7 @@ struct UmpahUmpahApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-            SwimmingStatsView()
+            MainTabView()
         }
-        .modelContainer(sharedModelContainer)
     }
 }

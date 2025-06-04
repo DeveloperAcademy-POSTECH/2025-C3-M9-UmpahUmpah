@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct HorizontalGraph: View {
-    
     var oldValue: Double = 0.3
     var newValue: Double = 0.7
     var title: String = "🔥 칼로리"
@@ -9,7 +8,6 @@ struct HorizontalGraph: View {
     var isLowerGood: Bool = false
     
     var body: some View {
-        
         ZStack(alignment: .top) {
             RoundedRectangle(cornerRadius: 16)
                 .fill(.white)
@@ -17,13 +15,12 @@ struct HorizontalGraph: View {
                 .shadow(radius: 4)
             
             VStack(spacing: 8) {
-                
-                ZStack(){
-                    HStack{
+                ZStack {
+                    HStack {
                         Text(title)
                             .font(.title2)
                             .fontWeight(.heavy)
-                        .padding(.top, 12)
+                            .padding(.top, 12)
                         
                         Text("+ \(Int((Double(newValue) - Double(oldValue)) * 100))")
                             .font(.caption)
@@ -32,12 +29,12 @@ struct HorizontalGraph: View {
                             .padding(.top, 10)
                     }
                     
-                    HStack{
+                    HStack {
                         Spacer()
-                        //MARK: 항목 설명 컴포넌트 출력명령을 여기서 내리면 됩니다.
-                        Button(action:{
-                            
-                        }){
+
+                        // MARK: 항목 설명 컴포넌트 출력명령을 여기서 내리면 됩니다.
+
+                        Button(action: {}) {
                             Image(systemName: "info.circle")
                                 .foregroundStyle(.black)
                         }
@@ -45,10 +42,10 @@ struct HorizontalGraph: View {
                 }
                 
                 HStack(spacing: 0) {
-                    HStack{
+                    HStack {
                         Spacer()
                         
-                        ZStack(alignment: .trailing){
+                        ZStack(alignment: .trailing) {
                             Rectangle()
                                 .fill(Color.mint)
                                 .frame(width: CGFloat(oldValue) * 150, height: 32)
@@ -67,8 +64,8 @@ struct HorizontalGraph: View {
                         .foregroundStyle(.gray)
                         .padding(.horizontal, 10)
                     
-                    HStack{
-                        ZStack(alignment: .leading){
+                    HStack {
+                        ZStack(alignment: .leading) {
                             Rectangle()
                                 .fill(Color.blue)
                                 .frame(width: CGFloat(newValue) * 150, height: 32)
@@ -91,9 +88,6 @@ struct HorizontalGraph: View {
         .frame(height: 100)
     }
 }
-
-
-
 
 #Preview {
     HorizontalGraph()
