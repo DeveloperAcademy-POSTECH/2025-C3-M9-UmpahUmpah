@@ -25,7 +25,8 @@ struct UmpahUmpahApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ContentView()
+            SwimmingStatsView()
         }
         .modelContainer(sharedModelContainer)
     }
