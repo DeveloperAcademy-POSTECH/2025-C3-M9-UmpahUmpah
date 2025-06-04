@@ -12,13 +12,13 @@ final class SwimmingWorkoutDataSource {
 //        let predicate = HKQuery.predicateForWorkoutActivities(workoutActivityType: .swimming)
 //        let predicate = HKQuery.predicateForWorkouts(with: .swimming)
 //            .addingStartAndEndDatePredicate(start: start, end: end)
-    
+
         // 변경
         var predicates: [NSPredicate] = [
             HKQuery.predicateForWorkouts(with: .swimming),
-            HKQuery.predicateForSamples(withStart: start, end: end, options: [])
+            HKQuery.predicateForSamples(withStart: start, end: end, options: [.strictStartDate, .strictEndDate])
         ]
-        
+
         // stroke 추가
         if let stroke = strokeType {
             let metadataPredicate = HKQuery.predicateForObjects(withMetadataKey: HKMetadataKeySwimmingStrokeStyle, allowedValues: [stroke.hkValue as NSNumber])
@@ -28,13 +28,13 @@ final class SwimmingWorkoutDataSource {
         // 추가
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         let sampleType = HKObjectType.workoutType()
-        
-       
+
         return try await withCheckedThrowingContinuation { continuation in
             let query = HKSampleQuery(sampleType: sampleType,
                                       predicate: predicate,
                                       limit: HKObjectQueryNoLimit,
-                                      sortDescriptors: nil) { _, samples, error in
+                                      sortDescriptors: nil)
+            { _, samples, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                     return
@@ -48,10 +48,9 @@ final class SwimmingWorkoutDataSource {
 }
 
 // 제거 예정
-//extension NSPredicate {
+// extension NSPredicate {
 //    func addingStartAndEndDatePredicate(start: Date, end: Date) -> NSPredicate {
 //        let datePredicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
 //        return NSCompoundPredicate(andPredicateWithSubpredicates: [self, datePredicate])
 //    }
-//}
-
+// }

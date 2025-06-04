@@ -10,7 +10,7 @@ import HealthKit
 final class HeartRateDataSource {
     func fetchAverageHeartRate(start: Date, end: Date) async throws -> Double? {
         let type = HKQuantityType.quantityType(forIdentifier: .heartRate)!
-        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [.strictStartDate, .strictEndDate])
 
         return try await withCheckedThrowingContinuation { continuation in
             let query = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
