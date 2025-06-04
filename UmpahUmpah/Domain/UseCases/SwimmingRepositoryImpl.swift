@@ -11,8 +11,10 @@ struct SwimmingRepositoryImpl: SwimmingRepository {
     let workoutDataSource = SwimmingWorkoutDataSource()
     let heartRateDataSource = HeartRateDataSource()
 
-    func fetchSwimmingWorkouts(start: Date, end: Date) async throws -> [SwimmingWorkout] {
-        let rawWorkouts = try await workoutDataSource.fetchSwimmingWorkouts(start: start, end: end)
+//    func fetchSwimmingWorkouts(start: Date, end: Date) async throws -> [SwimmingWorkout] {
+    func fetchSwimmingWorkouts(start: Date, end: Date, strokeType: SwimmingStrokeType?) async throws -> [SwimmingWorkout] {
+//        let rawWorkouts = try await workoutDataSource.fetchSwimmingWorkouts(start: start, end: end)
+        let rawWorkouts = try await workoutDataSource.fetchSwimmingWorkouts(start: start, end: end, strokeType: strokeType)
 
         return rawWorkouts.map {
             SwimmingWorkout(

@@ -18,6 +18,7 @@ final class HealthKitManager {
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .distanceSwimming)!,
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKObjectType.quantityType(forIdentifier: .swimmingStrokeCount)!,
             HKQuantityType.quantityType(forIdentifier: .heartRate)!
         ]
 
