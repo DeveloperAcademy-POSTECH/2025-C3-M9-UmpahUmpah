@@ -24,50 +24,23 @@ let maxMetricValue = mockMetrics.map { $0.value }.max() ?? 100
 
 struct MainView: View {
     @StateObject private var viewModel = MainViewModel()
-    
+    @StateObject private var chartViewModel = ChartViewModel()
+
     var body: some View {
         VStack(spacing: 0) {
             // MARK: Header Section
-            
+
             HeaderSectionView()
             WeeklyCalendarView(viewModel: viewModel)
-            
+
             // MARK: UmpahGoritihm Chart Section
-            
-            VStack(alignment: .leading, spacing: 16) {
-                ForEach(mockMetrics) { metric in
-                    HStack(spacing: 12) {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(metric.color)
-                            .frame(width: metric.value * 2.1, height: 30)
-                        
-                        Spacer(minLength: 1)
-                        
-                        Text(metric.label)
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(metric.color)
-                    }
-                    .padding(.horizontal, 10)
-                }
-            }
-            .padding(.vertical, 20)
-            .padding(.horizontal, 11)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.white)
-                    .shadow(color: .black.opacity(0.11), radius: 6, x: 0, y: 1)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .inset(by: 3.5)
-                            .stroke(Color.white.opacity(0.12), lineWidth: 7)
-                    )
-            )
-            .padding(.top, 22)
-            .padding(.horizontal, 16)
-            
+
+            TripleGraphView(viewModel: chartViewModel)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 20)
+
             // MARK: SwimDataGridView Section
-            
+
             LazyVGrid(
                 columns: Array(repeating: GridItem(.flexible(), spacing: 13), count: 2),
                 spacing: 20
@@ -77,7 +50,7 @@ struct MainView: View {
                         Text("운동종류 \(index + 1)")
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(Color.subBlack)
-                        
+
                         Text("1234")
                             .font(.system(size: 26, weight: .bold))
                             .foregroundColor(Color.subBlack)
@@ -98,7 +71,6 @@ struct MainView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.top, 20)
         }
         Spacer()
     }

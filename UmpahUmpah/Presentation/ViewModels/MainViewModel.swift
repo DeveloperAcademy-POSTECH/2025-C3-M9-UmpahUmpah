@@ -47,7 +47,3 @@ final class MainViewModel: ObservableObject {
         return daysOfWeek[index]
     }
 }
-
-extension Date {
-    var day: Int { Calendar.current.component(.day, from: self) }
-}
