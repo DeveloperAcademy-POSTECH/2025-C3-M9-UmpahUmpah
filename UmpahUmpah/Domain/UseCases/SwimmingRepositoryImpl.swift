@@ -31,4 +31,8 @@ struct SwimmingRepositoryImpl: SwimmingRepository {
     func fetchAverageHeartRate(start: Date, end: Date) async throws -> Double? {
         return try await heartRateDataSource.fetchAverageHeartRate(start: start, end: end)
     }
+    
+    func fetchHeartRateSamples(start: Date, end: Date) async throws -> [HeartRateSample] {
+        return try await heartRateDataSource.fetchHeartRateSamples(start: start, end: end)
+    }
 }

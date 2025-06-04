@@ -15,7 +15,7 @@ final class SwimmingStrokeDataSource {
             return []
         }
 
-        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [.strictStartDate, .strictEndDate])
 
         return try await withCheckedThrowingContinuation { continuation in
             let query = HKSampleQuery(

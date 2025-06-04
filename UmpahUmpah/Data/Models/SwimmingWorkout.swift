@@ -7,11 +7,15 @@
 
 import Foundation
 
-struct SwimmingWorkout: Identifiable {
+struct SwimmingWorkout: Identifiable, Equatable {
     let id: UUID
     let startDate: Date
     let endDate: Date
     let duration: TimeInterval
     let distance: Double
     let energy: Double
+    var pacePer100m: Double {
+        guard distance > 0 else { return 0 }
+        return (duration / distance) * 100
+    }
 }
