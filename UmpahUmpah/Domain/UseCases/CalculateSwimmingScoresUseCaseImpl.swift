@@ -26,7 +26,6 @@ struct CalculateSwimmingScoresUseCaseImpl: CalculateSwimmingScoresUseCase {
             let prevEnd = sorted[i - 1].end
             let nextStart = sorted[i].start
             let gap = nextStart.timeIntervalSince(prevEnd)
-            print("🚧 gap: \(gap) sec")
 
             if gap > 60 { // 60초 이상 비면 쉬었다고 판단
                 restTime += gap
@@ -36,7 +35,34 @@ struct CalculateSwimmingScoresUseCaseImpl: CalculateSwimmingScoresUseCase {
         return restTime
     }
 
+    func calculateComprehensiveDailyScore(
+          workout: SwimmingWorkout,
+          heartRates: [HeartRateSample],
+          strokeInfos: [StrokeInfo],
+          score: SwimmingScore
+      ) -> Double {
+          // 기본 운동량 정규화 (0~100)
+          let distanceScore = min(100, max(0, (workout.distance - 500) / 1000 * 100))
+          let durationScore = min(100, max(0, (workout.duration - 900) / 1800 * 100))
+          let energyScore = min(100, max(0, (workout.energy - 150) / 300 * 100))
 
+          // strokeEfficiency 정규화
+          let normalizedEfficiency = min(100, max(0, (score.strokeEfficiency - 1.0) / 2.0 * 100))
+
+          // 최종 종합 점수 (가중치 조정 가능)
+          let overall = (
+              score.stabilityScore * 0.25 +
+              normalizedEfficiency * 0.2 +
+              score.immersionScore * 0.2 +
+              distanceScore * 0.15 +
+              durationScore * 0.1 +
+              energyScore * 0.1
+          )
+
+          return round(min(100, max(0, overall)))
+      }
+
+    
     func execute(
         workout: SwimmingWorkout,
         heartRates: [HeartRateSample],

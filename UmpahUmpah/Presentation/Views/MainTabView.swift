@@ -1,15 +1,11 @@
 import SwiftUI
 
-enum TabSelection {
-    case vs
-    case main
-    case setting
-}
-
 struct MainTabView: View {
-    @State private var selectedTab: TabSelection = .main
+    @StateObject var viewModel = TabViewModel()
+    
     var body: some View {
-        TabView(selection: $selectedTab) {
+        
+        TabView(selection: $viewModel.selectedTab) {
             VSView()
                 .tabItem {
                     Label("비교", systemImage: "arrow.left.arrow.right.circle")
@@ -25,6 +21,9 @@ struct MainTabView: View {
                     Label("설정", systemImage: "gear")
                 }
                 .tag(TabSelection.setting)
+        }
+        .task {
+            await viewModel.requestAuthorization()
         }
     }
 }

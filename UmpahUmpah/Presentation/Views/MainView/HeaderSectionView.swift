@@ -8,17 +8,20 @@
 import SwiftUI
 
 struct HeaderSectionView: View {
+    let dateText: String
+    let message: String
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("2025.06.15.")
+            Text(dateText)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(Color.white)
+                .foregroundColor(.white)
                 .padding(.top, 10)
                 .padding(.horizontal, 16)
 
-            Text("오늘도, 음파음파")
+            Text(message)
                 .font(.system(size: 28, weight: .bold))
-                .foregroundColor(Color.white)
+                .foregroundColor(.white)
                 .padding(.top, 10)
                 .padding(.horizontal, 16)
         }
@@ -29,5 +32,5 @@ struct HeaderSectionView: View {
 }
 
 #Preview {
-    HeaderSectionView()
+    HeaderSectionView(dateText: "2025.06.15.", message: "오늘도 음파음파")
 }

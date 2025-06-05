@@ -1,26 +1,27 @@
 import SwiftUI
 
 struct TripleGraphView: View {
-    @ObservedObject var viewModel: ChartViewModel
-
+    @ObservedObject var viewModel: SwimmingStatsViewModel
+    
     var body: some View {
         VStack(alignment: .leading) {
-            GraphRowView(
-                title: "스트로크 효율성",
-                value: viewModel.strokeEfficiency,
-                color: .graph1
-            )
-            GraphRowView(
-                title: "안정지수",
-                value: viewModel.stability,
-                color: .graph2
-            )
-            GraphRowView(
-                title: "몰입도",
-                value: viewModel.immersion,
-                color: .graph3
-            )
+                        GraphRowView(
+                            title: "스트로크 효율성",
+                            value: viewModel.dailySummaries.first?.score.strokeEfficiency ?? 0.0,
+                            color: .graph1
+                        )
+                        GraphRowView(
+                            title: "안정지수",
+                            value: viewModel.dailySummaries.first?.score.stabilityScore ?? 0.0,
+                            color: .graph2
+                        )
+                        GraphRowView(
+                            title: "몰입도",
+                            value: viewModel.dailySummaries.first?.score.immersionScore ?? 0.0,
+                            color: .graph3
+                        )
         }
+ 
         .padding(.vertical, 22)
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)
@@ -41,10 +42,10 @@ private struct GraphRowView: View {
     let title: String
     let value: Double
     let color: Color
-
+    
     private let barHeight: CGFloat = 32
     private let maxWidth: CGFloat = 210
-
+    
     var body: some View {
         HStack {
             ZStack(alignment: .leading) {
@@ -52,7 +53,7 @@ private struct GraphRowView: View {
                     .fill(color)
                     .frame(width: CGFloat(value) * maxWidth, height: barHeight)
                     .cornerRadius(10, corners: [.topRight, .bottomRight])
-
+                
                 Text("\(Int(Double(value) * 100))")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
@@ -68,5 +69,5 @@ private struct GraphRowView: View {
 }
 
 #Preview {
-    TripleGraphView(viewModel: ChartViewModel())
+    TripleGraphView(viewModel: SwimmingStatsViewModel() )
 }

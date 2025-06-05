@@ -8,20 +8,29 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject private var viewModel = MainViewModel()
+    
     @StateObject private var chartViewModel = ChartViewModel()
+    @StateObject private var swimmingStatsViewModel = SwimmingStatsViewModel()
     @State private var isDataEmpty = false
+    
 
     var body: some View {
         VStack {
             VStack(spacing: 0) {
                 // MARK: Header Section
 
-                HeaderSectionView()
-                WeeklyCalendarView(viewModel: viewModel)
-
+                HeaderSectionView(
+                    dateText: Date().formattedTodayDate(), message: "오늘도 음파음파"
+                )
+                
+                WeeklyCalendarView { selectedDate in
+                    print("날짜 선택됨: \(selectedDate)")
+                    swimmingStatsViewModel.startDate = selectedDate
+                }
+                
                 if !isDataEmpty {
-                    SwimMetricGridView(viewModel: chartViewModel)
+//                    SwimMetricGridView(viewModel: chartViewModel)
+                    SwimMetricGridView(chartViewModel: chartViewModel, swimmingStatsViewModel: swimmingStatsViewModel)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 20)
                 } else {

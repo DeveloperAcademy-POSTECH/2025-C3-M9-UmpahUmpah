@@ -8,38 +8,77 @@
 import SwiftUI
 
 struct WeeklyCalendarView: View {
-    @ObservedObject var viewModel: MainViewModel
+    private let calendar = Calendar.current
+    private let  today = Date()
+    
+    let onDateSelected: (Date) -> Void
+    @State private var selectedDate: Date? = Date()
+    
+    // 오늘 기준으로 왼쪽으로 6일
+    private var weekDates: [Date] {
+            (0..<7).compactMap { offset in
+                calendar.date(byAdding: .day, value: offset - 14, to: today)
+            }
+        }
+    
+    private func weekdaySymbol(for date: Date) -> String {
+        let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "ko_KR") // 한글 로케일
+            formatter.dateFormat = "E" // 요일 (월, 화, 수...)
+            return formatter.string(from: date)
+       }
 
+       private func dayString(for date: Date) -> String {
+           let formatter = DateFormatter()
+           formatter.dateFormat = "d"
+           return formatter.string(from: date)
+       }
+
+       private func isToday(_ date: Date) -> Bool {
+           calendar.isDate(date, inSameDayAs: today)
+       }
+
+       private func isSelected(_ date: Date) -> Bool {
+           if let selectedDate = selectedDate {
+               return calendar.isDate(date, inSameDayAs: selectedDate)
+           }
+           return false
+       }
+    
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(viewModel.weekDates, id: \.self) { date in
-                VStack(spacing: 10) {
-                    Text(viewModel.changeDayOfWeek(date))
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(Color.white)
-
-                    Text("\(date.day)")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(Color.white)
+        HStack(spacing: 12) {
+            ForEach(weekDates, id: \.self) { date in
+                VStack(spacing: 4) {
+                    Text(weekdaySymbol(for: date))
+                        .font(.caption)
+                        .foregroundColor(.white)
+                    
+                    Text(dayString(for: date))
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(8)
+                        
+                        .clipShape(Circle())
                 }
-                .padding(.horizontal, 17)
+                .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(viewModel.isSelectedDate(date) ? Color.accent1 : Color.clear)
+                        .fill( isSelected(date) ? Color.accent1 : Color.clear)
                         .frame(width: 36, height: 63)
                 )
                 .onTapGesture {
-                    viewModel.selectedDate(date)
+                    selectedDate = date
+                    onDateSelected(date)
                 }
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 18)
-        .frame(maxWidth: .infinity, alignment: .center)
-        .background(Color.brand)
+        .frame(maxWidth: .infinity, maxHeight: 80,  alignment: .center)
+        .background(.brand)
     }
 }
 
 #Preview {
-    WeeklyCalendarView(viewModel: MainViewModel())
+    WeeklyCalendarView{ selectedDate in
+        print("날짜 선택됨: \(selectedDate)")
+    }
 }
