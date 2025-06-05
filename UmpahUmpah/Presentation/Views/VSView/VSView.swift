@@ -1,6 +1,10 @@
 import SwiftUI
 
 struct VSView: View {
+    @StateObject private var viewModel = VSFeedbackViewModel(
+        useCase: RequestFeedbackUseCaseImpl(repository: ChatGPTRepositoryImpl())
+    )
+
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -8,7 +12,12 @@ struct VSView: View {
 
                 VSScoreSectionView()
 
-                // MARK: 펼치는 박스
+                    // MARK: 펼치는 박스
+
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
 
                 ExpandableBox {
                     VStack(alignment: .leading, spacing: 12) {
