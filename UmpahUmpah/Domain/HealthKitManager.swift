@@ -62,11 +62,9 @@ final class HealthKitManager: ObservableObject {
     // MARK: - 타입 구성
 
     private func configureTypes() {
-        if let steps = HKObjectType.quantityType(forIdentifier: .stepCount),
-           let heart = HKObjectType.quantityType(forIdentifier: .heartRate)
-        {
-            readTypes = [steps, heart]
-            shareTypes = [steps, heart]
+        if let heart = HKObjectType.quantityType(forIdentifier: .heartRate) {
+            readTypes = [heart]
+            shareTypes = [heart]
         }
     }
 
@@ -106,7 +104,7 @@ final class HealthKitManager: ObservableObject {
         }
         do {
             try await healthStore.requestAuthorization(toShare: shareTypes,
-                                                       read: readTypes)
+                                                       read: swimmingTypes)
         } catch {
             // 사용자가 ‘취소’ 가능 – 오류 전파 없음 (기존 동작 유지)
         }
@@ -118,7 +116,7 @@ final class HealthKitManager: ObservableObject {
     //  - 기존 HealthKitManager 의 API와 동일: throws 로 오류 전달
     func requestSwimmingAuthorization() async throws {
         return try await withCheckedThrowingContinuation { continuation in
-            healthStore.requestAuthorization(toShare: nil,
+            healthStore.requestAuthorization(toShare: shareTypes,
                                              read: swimmingTypes)
             { success, error in
                 if let error = error { continuation.resume(throwing: error) }
