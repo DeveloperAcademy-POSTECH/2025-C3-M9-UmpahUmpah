@@ -10,10 +10,10 @@ import Foundation
 struct SwimmingRepositoryImpl: SwimmingRepository {
     let workoutDataSource = SwimmingWorkoutDataSource()
     let heartRateDataSource = HeartRateDataSource()
-
+    
     func fetchSwimmingWorkouts(start: Date, end: Date, strokeType: SwimmingStrokeType?) async throws -> [SwimmingWorkout] {
         let rawWorkouts = try await workoutDataSource.fetchSwimmingWorkouts(start: start, end: end, strokeType: strokeType)
-
+        
         return rawWorkouts.map {
             let lapCount = $0.workoutEvents?.filter { $0.type == .lap }.count ?? 0
             

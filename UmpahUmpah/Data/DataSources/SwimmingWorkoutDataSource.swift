@@ -9,9 +9,6 @@ import HealthKit
 
 final class SwimmingWorkoutDataSource {
     func fetchSwimmingWorkouts(start: Date, end: Date, strokeType: SwimmingStrokeType?) async throws -> [HKWorkout] {
-//        let predicate = HKQuery.predicateForWorkoutActivities(workoutActivityType: .swimming)
-//        let predicate = HKQuery.predicateForWorkouts(with: .swimming)
-//            .addingStartAndEndDatePredicate(start: start, end: end)
 
         // 변경
         var predicates: [NSPredicate] = [
@@ -46,11 +43,3 @@ final class SwimmingWorkoutDataSource {
         }
     }
 }
-
-// 제거 예정
-// extension NSPredicate {
-//    func addingStartAndEndDatePredicate(start: Date, end: Date) -> NSPredicate {
-//        let datePredicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
-//        return NSCompoundPredicate(andPredicateWithSubpredicates: [self, datePredicate])
-//    }
-// }

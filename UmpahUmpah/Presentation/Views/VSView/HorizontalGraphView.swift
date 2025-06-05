@@ -33,7 +33,6 @@ struct HorizontalGraph: View {
                         Spacer()
 
                         // MARK: 항목 설명 컴포넌트 출력명령을 여기서 내리면 됩니다.
-
                         Button(action: {}) {
                             Image(systemName: "info.circle")
                                 .foregroundStyle(.black)
