@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     @StateObject private var viewModel = MainViewModel()
     @StateObject private var chartViewModel = ChartViewModel()
+
     @State private var isDataEmpty = false
 
     var body: some View {
@@ -18,16 +19,21 @@ struct MainView: View {
                 // MARK: Header Section
 
                 HeaderSectionView()
+
+                // MARK: WeeklyCalendarView Section
+
                 WeeklyCalendarView(viewModel: viewModel)
+
+                // MARK: SwimMetricGridView Section
 
                 if !isDataEmpty {
                     SwimMetricGridView(viewModel: chartViewModel)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 20)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 20)
                 } else {
                     Spacer()
                     Text("아직 수집된 데이터가 없어요!\n 설정에서 접근 권한을 확인해 주세요.")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(Color.subGray)
                         .multilineTextAlignment(.center)
                     Spacer()
