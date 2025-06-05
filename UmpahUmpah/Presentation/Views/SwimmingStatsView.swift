@@ -11,30 +11,6 @@ struct SwimmingStatsView: View {
     @StateObject private var viewModel = SwimmingStatsViewModel()
     
     var body: some View {
-        /*
-         VStack {
-         if viewModel.isLoading {
-         ProgressView("Loading...")
-         } else if let error = viewModel.errorMessage {
-         Text("Error: \(error)")
-         } else {
-         List(viewModel.workouts) { workout in
-         VStack(alignment: .leading) {
-         Text("🏊 Distance: \(workout.distance, specifier: "%.1f") m")
-         Text("🔥 Energy: \(workout.energy, specifier: "%.1f") kcal")
-         Text("⏱️ Duration: \(workout.duration, specifier: "%.1f") s")
-         }
-         }
-         if let hr = viewModel.averageHeartRate {
-         Text("❤️ Avg HR: \(Int(hr)) bpm")
-         }
-         }
-         }
-         .task {
-         let start = Calendar.current.date(byAdding: .day, value: -14, to: Date())!
-         await viewModel.loadStats(start: start, end: Date())
-         }
-         */
         VStack {
             Form {
                 Section(header: Text("수영 영법")) {
@@ -69,25 +45,29 @@ struct SwimmingStatsView: View {
                 }
                 
                 
-                List(viewModel.strokeInfos) { info in
+//                List(viewModel.strokeInfos) { info in
+//                    VStack(alignment: .leading) {
+//                        Text("🕒 \(info.start, formatter: dateFormatter) ~ \(info.end, formatter: timeFormatter)")
+//                        Text("🏊‍♂️ 영법: \(info.style.displayName)")
+//                        Text("💯 횟수: \(Int(info.count))")
+//                    }
+//                }
+                
+                List(viewModel.dailySummaries) { summary in
                     VStack(alignment: .leading) {
-                        Text("🕒 \(info.start, formatter: dateFormatter) ~ \(info.end, formatter: timeFormatter)")
-                        Text("🏊‍♂️ 영법: \(info.style.displayName)")
-                        Text("💯 횟수: \(Int(info.count))")
+                        Text("📅 \(summary.date, formatter: dateFormatter)")
+                        Text("Daily Score: \(summary.overallScore, specifier: "%.1f")점")
+                        Text("안정 지수: \(summary.score.stabilityScore, specifier: "%.1f")점")
+                        Text("스트로크 효율성: \(summary.score.strokeEfficiency, specifier: "%.2f") m/stroke")
+                        Text("몰입도 점수: \(summary.score.immersionScore, specifier: "%.1f")")
+                        Text("거리: \(summary.workout.distance, specifier: "%.1f")m")
+                        Text("칼로리: \(summary.workout.energy, specifier: "%.1f")kcal")
+                        Text("운동시간: \(summary.workout.duration, specifier: "%.1f")초")
+                        Text("랩 수: \(summary.workout.lapCount ?? 0, specifier: "%.1d")laps")
+                        Text("평균 페이스: \(summary.workout.pacePer100m, specifier: "%.1f")/100m")
+                        Text("심박수: \(summary.averageHeartRate ?? 0.0, specifier: "%.1f")bpm")
                     }
                 }
-                if let hr = viewModel.averageHeartRate {
-                    Text("❤️ 평균 심박수: \(Int(hr)) bpm")
-                }
-                if let score = viewModel.swimmingScore, let overall = viewModel.dailyOverallScore {
-                    VStack {
-                        Text("🧘 안정 지수: \(score.stabilityScore, specifier: "%.1f")")
-                        Text("💦 스트로크 효율: \(score.strokeEfficiency, specifier: "%.2f") m/stroke")
-                        Text("🔁 몰입도 지수: \(score.immersionScore, specifier: "%.1f")")
-                        Text("📊 종합 점수: \(overall, specifier: "%.1f")")
-                    }
-                }
-
             }
         }
         .onChange(of: viewModel.selectedWorkout) { _ in
