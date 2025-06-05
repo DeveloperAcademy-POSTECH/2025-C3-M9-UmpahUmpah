@@ -10,7 +10,7 @@ import SwiftUI
 struct MainView: View {
     @StateObject private var viewModel = MainViewModel()
     @StateObject private var chartViewModel = ChartViewModel()
-    @State private var isDataEmpty = true
+    @State private var isDataEmpty = false
 
     var body: some View {
         VStack {
@@ -27,7 +27,7 @@ struct MainView: View {
                 } else {
                     Spacer()
                     Text("아직 수집된 데이터가 없어요!\n 설정에서 접근 권한을 확인해 주세요.")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(Color.subGray)
                         .multilineTextAlignment(.center)
                     Spacer()

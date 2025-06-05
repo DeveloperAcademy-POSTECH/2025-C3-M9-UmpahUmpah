@@ -35,6 +35,7 @@ final class MainViewModel: ObservableObject {
     }
 
     // 선택된 날짜 설정
+    // TODO: 선택된 날짜를 반환하는 함수로 변경
     func selectedDate(_ date: Date) -> Date {
         selectedDate = date
         return selectedDate
@@ -47,4 +48,3 @@ final class MainViewModel: ObservableObject {
         return daysOfWeek[index]
     }
 }
-
