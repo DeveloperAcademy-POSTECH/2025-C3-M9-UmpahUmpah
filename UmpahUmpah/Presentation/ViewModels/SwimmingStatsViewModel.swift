@@ -51,9 +51,7 @@ final class SwimmingStatsViewModel: ObservableObject {
         
         do {
             try await HealthKitManager.shared.requestAuthorization()
-            //            let workouts = try await repository.fetchSwimmingWorkouts(start: start, end: end)
             let workouts = try await repository.fetchSwimmingWorkouts(start: startDate, end: endDate, strokeType: selectedStroke)
-            //            let avgHR = try await repository.fetchAverageHeartRate(start: start, end: end)
             let avgHR = try await repository.fetchAverageHeartRate(start: startDate, end: endDate)
             
             
