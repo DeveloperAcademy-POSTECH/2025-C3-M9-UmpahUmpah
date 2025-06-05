@@ -6,11 +6,6 @@ struct TripleGraphView: View {
     var body: some View {
         VStack(alignment: .leading) {
                         GraphRowView(
-                            title: "스트로크 효율성",
-                            value: viewModel.dailySummaries.first?.score.strokeEfficiency ?? 0.0,
-                            color: .graph1
-                        )
-                        GraphRowView(
                             title: "안정지수",
                             value: viewModel.dailySummaries.first?.score.stabilityScore ?? 0.0,
                             color: .graph2
@@ -35,6 +30,7 @@ struct TripleGraphView: View {
                         .stroke(Color.white.opacity(0.12), lineWidth: 7)
                 )
         )
+        StrokeEfficiencyView(value: viewModel.dailySummaries.first?.score.strokeEfficiency ?? 0.0)
     }
 }
 
@@ -65,6 +61,41 @@ private struct GraphRowView: View {
                 .foregroundStyle(color)
         }
         .padding(.horizontal, 10)
+    }
+}
+
+private struct StrokeEfficiencyView: View {
+    let value: Double
+    
+    var body: some View {
+        HStack {
+            Text("\(value, specifier: "%.1f")")
+                .font(.system(size: 26, weight: .bold))
+                .foregroundColor(Color.graph1)
+                +
+                Text("m / stroke")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(Color.graph1)
+
+            Spacer()
+            
+            Text("스트로크 효율성")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(Color.graph1)
+        }
+        
+        .padding(.horizontal, 22)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.white)
+                .shadow(color: .black.opacity(0.11), radius: 6, x: 0, y: 1)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .inset(by: 3.5)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 7)
+                )
+        )
     }
 }
 
