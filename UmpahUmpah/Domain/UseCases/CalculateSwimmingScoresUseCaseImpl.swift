@@ -26,7 +26,6 @@ struct CalculateSwimmingScoresUseCaseImpl: CalculateSwimmingScoresUseCase {
             let prevEnd = sorted[i - 1].end
             let nextStart = sorted[i].start
             let gap = nextStart.timeIntervalSince(prevEnd)
-            print("🚧 gap: \(gap) sec")
 
             if gap > 60 { // 60초 이상 비면 쉬었다고 판단
                 restTime += gap

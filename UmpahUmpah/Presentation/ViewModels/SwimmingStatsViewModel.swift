@@ -10,7 +10,6 @@ import Foundation
 @MainActor
 final class SwimmingStatsViewModel: ObservableObject {
     @Published var workouts: [SwimmingWorkout] = []
-    @Published var averageHeartRate: Double?
     @Published var isLoading = false
     @Published var errorMessage: String?
     
@@ -22,6 +21,8 @@ final class SwimmingStatsViewModel: ObservableObject {
     @Published var swimmingScore: SwimmingScore?
     @Published var dailyOverallScore: Double? = nil
     @Published var selectedWorkout: SwimmingWorkout?
+    
+    @Published var dailySummaries: [DailySwimmingInfo] = []
     
     private let repository: SwimmingRepository = SwimmingRepositoryImpl()
     private let scoreUseCase: CalculateSwimmingScoresUseCase = CalculateSwimmingScoresUseCaseImpl()
@@ -52,13 +53,11 @@ final class SwimmingStatsViewModel: ObservableObject {
         do {
             try await HealthKitManager.shared.requestAuthorization()
             let workouts = try await repository.fetchSwimmingWorkouts(start: startDate, end: endDate, strokeType: selectedStroke)
-            let avgHR = try await repository.fetchAverageHeartRate(start: startDate, end: endDate)
-            
             
             self.workouts = workouts
-            self.averageHeartRate = avgHR
             self.selectedWorkout = workouts.first
             
+            await calculateDailySummaries()
         } catch {
             self.errorMessage = error.localizedDescription
         }
@@ -100,7 +99,69 @@ final class SwimmingStatsViewModel: ObservableObject {
         }
     }
     
+    private func groupWorkoutsByDate(_ workouts: [SwimmingWorkout]) -> [Date: SwimmingWorkout] {
+        var grouped: [Date: SwimmingWorkout] = [:]
+        let calendar = Calendar.current
+
+        for workout in workouts {
+            let date = calendar.startOfDay(for: workout.startDate)
+            // 하루에 하나의 workout만 있다고 가정 → 먼저 들어온 것만 저장
+            if grouped[date] == nil {
+                grouped[date] = workout
+            }
+        }
+
+        return grouped
+    }
+
     
+    func calculateDailySummaries() async {
+        do {
+            let rawWorkouts = try await repository.fetchSwimmingWorkouts(start: startDate, end: endDate, strokeType: selectedStroke)
+            let heartRates = try await repository.fetchHeartRateSamples(start: startDate, end: endDate)
+            let allStrokeInfos = try await strokeData.fetchStrokeSamples(start: startDate, end: endDate, strokeType: selectedStroke)
+            
+            let grouped = groupWorkoutsByDate(rawWorkouts)
+
+            var summaries: [DailySwimmingInfo] = []
+
+            for workout in grouped.values {
+                let strokeInfos = allStrokeInfos.filter { $0.start >= workout.startDate && $0.end <= workout.endDate }
+                let hrSamples = heartRates.filter { $0.date >= workout.startDate && $0.date <= workout.endDate }
+
+                let score = scoreUseCase.execute(
+                    workout: workout,
+                    heartRates: hrSamples,
+                    strokeInfos: strokeInfos
+                )
+
+                let overall = (scoreUseCase as? CalculateSwimmingScoresUseCaseImpl)?
+                    .calculateComprehensiveDailyScore(
+                        workout: workout,
+                        heartRates: hrSamples,
+                        strokeInfos: strokeInfos,
+                        score: score
+                    ) ?? 0
+
+                let summary = DailySwimmingInfo(
+                    date: Calendar.current.startOfDay(for: workout.startDate),
+                    workout: workout,
+                    score: score,
+                    heartRates: hrSamples,
+                    strokeInfos: strokeInfos,
+                    overallScore: overall
+                )
+
+                summaries.append(summary)
+            }
+
+            self.dailySummaries = summaries.sorted { $0.date < $1.date }
+
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+
 }
 
 
