@@ -29,7 +29,6 @@ struct MainView: View {
                 }
                 
                 if !isDataEmpty {
-//                    SwimMetricGridView(viewModel: chartViewModel)
                     SwimMetricGridView(chartViewModel: chartViewModel, swimmingStatsViewModel: swimmingStatsViewModel)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 20)
