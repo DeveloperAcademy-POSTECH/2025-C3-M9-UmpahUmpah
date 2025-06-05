@@ -2,14 +2,9 @@ import SwiftUI
 
 struct TripleGraphView: View {
     @ObservedObject var viewModel: ChartViewModel
-
+    
     var body: some View {
         VStack(alignment: .leading) {
-            GraphRowView(
-                title: "스트로크 효율성",
-                value: viewModel.strokeEfficiency,
-                color: .graph1
-            )
             GraphRowView(
                 title: "안정지수",
                 value: viewModel.stability,
@@ -34,6 +29,7 @@ struct TripleGraphView: View {
                         .stroke(Color.white.opacity(0.12), lineWidth: 7)
                 )
         )
+        StrokeEfficiencyView(value: viewModel.strokeEfficiency)
     }
 }
 
@@ -41,10 +37,10 @@ private struct GraphRowView: View {
     let title: String
     let value: Double
     let color: Color
-
+    
     private let barHeight: CGFloat = 32
     private let maxWidth: CGFloat = 210
-
+    
     var body: some View {
         HStack {
             ZStack(alignment: .leading) {
@@ -52,7 +48,7 @@ private struct GraphRowView: View {
                     .fill(color)
                     .frame(width: CGFloat(value) * maxWidth, height: barHeight)
                     .cornerRadius(10, corners: [.topRight, .bottomRight])
-
+                
                 Text("\(Int(Double(value) * 100))")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
@@ -64,6 +60,41 @@ private struct GraphRowView: View {
                 .foregroundStyle(color)
         }
         .padding(.horizontal, 10)
+    }
+}
+
+private struct StrokeEfficiencyView: View {
+    let value: Double
+    
+    var body: some View {
+        HStack {
+            Text("\(value, specifier: "%.1f")")
+                .font(.system(size: 26, weight: .bold))
+                .foregroundColor(Color.graph1)
+                +
+                Text("m / stroke")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(Color.graph1)
+
+            Spacer()
+            
+            Text("스트로크 효율성")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(Color.graph1)
+        }
+        
+        .padding(.horizontal, 22)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.white)
+                .shadow(color: .black.opacity(0.11), radius: 6, x: 0, y: 1)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .inset(by: 3.5)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 7)
+                )
+        )
     }
 }
 
