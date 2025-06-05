@@ -79,11 +79,12 @@ struct SwimmingStatsView: View {
                 if let hr = viewModel.averageHeartRate {
                     Text("❤️ 평균 심박수: \(Int(hr)) bpm")
                 }
-                if let score = viewModel.swimmingScore {
+                if let score = viewModel.swimmingScore, let overall = viewModel.dailyOverallScore {
                     VStack {
                         Text("🧘 안정 지수: \(score.stabilityScore, specifier: "%.1f")")
                         Text("💦 스트로크 효율: \(score.strokeEfficiency, specifier: "%.2f") m/stroke")
                         Text("🔁 몰입도 지수: \(score.immersionScore, specifier: "%.1f")")
+                        Text("📊 종합 점수: \(overall, specifier: "%.1f")")
                     }
                 }
 
