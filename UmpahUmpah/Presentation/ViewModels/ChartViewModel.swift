@@ -7,6 +7,7 @@
 
 import Foundation
 
+//MARK: SwimMetricViewModel로 이동, PR시 삭제
 final class ChartViewModel: ObservableObject {
     @Published var strokeEfficiency: Double = 1.0
     @Published var stability: Double = 0.6

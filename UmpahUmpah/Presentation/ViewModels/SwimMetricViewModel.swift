@@ -9,6 +9,9 @@ import Foundation
 
 final class SwimMetricViewModel: ObservableObject {
     @Published var swimMetrics: [SwimMetric] = []
+    @Published var strokeEfficiency: Double = 1.0
+    @Published var stability: Double = 0.6
+    @Published var immersion: Double = 0.3
 
     func updateSwimMetrics(from data: [String: Any]) {
         var result: [SwimMetric] = []
@@ -44,10 +47,14 @@ final class SwimMetricViewModel: ObservableObject {
         if let lapCount = data["lapCount"] as? Int {
             result.append(SwimMetric(title: "🏊🏻 랩수", value: "\(lapCount)", unit: nil))
         }
+        
+        self.swimMetrics = result
+        print("swimMetrics 업데이트 됨 : \(swimMetrics)")
 
         // UI 관련 상태 업데이트는 메인 스레드에서 진행
         DispatchQueue.main.async {
             self.swimMetrics = result
         }
+    
     }
 }

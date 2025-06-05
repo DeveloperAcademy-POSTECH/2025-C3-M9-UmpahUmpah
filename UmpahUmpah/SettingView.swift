@@ -10,6 +10,7 @@ enum HealthKitAuthState {
 }
 
 struct SettingView: View {
+    @ObservedObject private var swimMetricViewModel = SwimMetricViewModel()
     @State private var swimmingData: [String: Any] = [:]
     @State private var selectedDate: Date = .init()
     @State private var healthKitAuthState: HealthKitAuthState = .unknown
@@ -145,11 +146,11 @@ struct SettingView: View {
             }
             let duration = workout.duration
             let distance = workout.totalDistance?.doubleValue(for: .meter()) ?? 0
-//            let lapCount = Double(workout.lapCount)
+            let lapCount = workout.workoutEvents?.count ?? 0 //lap count
             var result: [String: Any] = [
                 "duration": duration,
                 "workoutDistance": distance,
-//                "lapCount": lapCount
+                "lapCount": lapCount
             ]
             let group = DispatchGroup()
             // 칼로리
@@ -161,16 +162,24 @@ struct SettingView: View {
             // 심박수
             group.enter()
             healthStore.fetchHeartRateSamples(startDate: workout.startDate, endDate: workout.endDate) { samples in
-                let avg = samples.map { $0.quantity.doubleValue(for: .init(from: "count/min")) }.average
-                if let avg = avg { result["heartRate"] = avg }
+                let avgHeartRate = samples.map { $0.quantity.doubleValue(for: .init(from: "count/min")) }.average
+                if let avgHeartRate = avgHeartRate { result["heartRate"] = avgHeartRate }
                 group.leave()
             }
-
+            // 평균 페이스
+            if distance > 0 {
+                result["averagePace"] = distance > 0 ? duration / (distance / 100) : 0
+            }
+            
+            print(result)
+            
             group.notify(queue: .main) {
                 swimmingData = result
+                swimMetricViewModel.updateSwimMetrics(from: result)
             }
         }
     }
+
 
     private var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -183,4 +192,8 @@ struct SettingView: View {
 private extension Array where Element == Double {
     var average: Double? { isEmpty ? nil : reduce(0, +) / Double(count) }
     var sum: Double? { isEmpty ? nil : reduce(0, +) }
+}
+
+#Preview {
+    SettingView()
 }
