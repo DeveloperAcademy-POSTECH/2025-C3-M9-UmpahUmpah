@@ -8,27 +8,48 @@
 import Foundation
 
 enum GPTPromptBuilder {
-    static func build(from metric: SwimMetric) -> String {
-        // Mockup Data
+    static func build(from dailyInfo: DailySwimmingInfo) -> String {
         return """
-        다음은 오늘의 수영 데이터입니다.
+        당신은 20년 경력의 전문 수영 트레이너이며, 다음 수영 데이터를 바탕으로 정확하고 구체적인 피드백과 개선방안을 제공해야 합니다.
 
-        - 운동 시간: 43분 24초  
-        - 총 거리: 100m  
-        - 칼로리: 324 kcal  
-        - 평균 페이스: 2분 44초/100m  
-        - 심박수: 130 bpm  
-        - 랩 수: 20  
+        [사용자 프로필]
+        - 50대 초중반 여성
+        - 수영 입문 2개월차
+        - 개선 목표: 호흡과 리듬 안정화, 지속 가능성 향상
 
-        이 데이터는 Apple Watch에서 수집된 것으로, 50대 초중반 여성 수영 초보자(수영 2개월차, 하루 1회, 주 7회 수영)의 기록입니다.  
-        피드백 목적은 다음과 같습니다:
+        [오늘의 수영 데이터]
+        - 운동 시간: \(Int(dailyInfo.workout.duration / 60))분 \(Int(dailyInfo.workout.duration) % 60)초
+        - 총 거리: \(String(format: "%.0f", dailyInfo.workout.distance))m
+        - 칼로리: \(String(format: "%.0f", dailyInfo.workout.energy)) kcal
+        - 평균 페이스: \(String(format: "%.1f", dailyInfo.workout.pacePer100m))초/100m
+        - 심박수: \(dailyInfo.averageHeartRate != nil ? String(format: "%.0f bpm", dailyInfo.averageHeartRate!) : "측정되지 않음")
+        - 랩 수: \(dailyInfo.workout.lapCount)개
 
-        1. 수영 실력 향상을 위한 정확하고 냉정한 피드백
-        2. 각 항목(시간, 거리, 페이스, 심박수 등)에 대해 항목별로 구체적 분석 및 개선 방향 제시  
-        3. (선택) 호흡과 리듬에 대한 간접 추정과 피드백 포함
+        [스트로크 분석 데이터]
+        - 스트로크 효율성: \(String(format: "%.1f", dailyInfo.score.strokeEfficiency))m/stroke
+        - 안정성 점수: \(String(format: "%.1f", dailyInfo.score.stabilityScore))/100
+        - 몰입도 점수: \(String(format: "%.1f", dailyInfo.score.immersionScore))/100
+        - 종합 점수: \(String(format: "%.1f", dailyInfo.overallScore))/100
 
-        위 목적에 맞춰 전문가처럼 구체적이고 직설적인 피드백을 10줄 이하로 해주세요. 감정은 배제하고 사실과 논리에 기반한 분석만 원합니다.
+        [피드백 작성 가이드]
+        - 반드시 아래의 형식을 따라 작성할 것
+        - 각 항목마다 이모지 사용
+        - 내용은 반드시 구체적이고 전문적으로 작성하며, 개선 방안까지 트레이너가 하는 말처럼 제시할 것
+        - 줄글이 아닌 "항목별 구분된 형태"로 제시
 
+        [출력 형식 예시]
+        🧾 요약  
+        - (한 문장 요약)
+
+        💪 강점  
+        - (강점1)  
+        - (강점2)
+
+        ⚠️ 개선점  
+        - (개선점1 + 이유 + 개선 제안)  
+        - (개선점2 + 이유 + 개선 제안)
+
+        이 구조를 절대 벗어나지 말고, 응답 전체는 10줄 이내로 유지해주세요.
         """
     }
 }

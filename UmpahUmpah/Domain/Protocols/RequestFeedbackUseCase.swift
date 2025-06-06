@@ -8,5 +8,5 @@
 import Foundation
 
 protocol RequestFeedbackUseCase {
-    func execute(from metric: SwimMetric) async throws -> String
+    func execute(from dailyInfo: DailySwimmingInfo) async throws -> String
 }

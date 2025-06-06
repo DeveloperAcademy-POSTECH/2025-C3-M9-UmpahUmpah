@@ -14,8 +14,8 @@ final class RequestFeedbackUseCaseImpl: RequestFeedbackUseCase {
         self.repository = repository
     }
 
-    func execute(from metric: SwimMetric) async throws -> String {
-        let prompt = GPTPromptBuilder.build(from: metric)
+    func execute(from dailyInfo: DailySwimmingInfo) async throws -> String {
+        let prompt = GPTPromptBuilder.build(from: dailyInfo)
         return try await repository.requestFeedback(prompt: prompt)
     }
 }

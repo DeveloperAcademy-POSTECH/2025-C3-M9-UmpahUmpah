@@ -1,20 +1,45 @@
 import SwiftUI
 
-struct ExpandableBox<Content: View>: View {
-    @ViewBuilder let content: () -> Content
+struct ExpandableBox: View {
+    @ObservedObject var viewModel: VSFeedbackViewModel
+    let swimData: DailySwimmingInfo
     @State private var isExpanded: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if isExpanded {
-                content()
-                    .padding()
-                    .transition(.move(edge: .top).combined(with: .opacity))
+                if viewModel.isLoading {
+                    TypingAnimationView(text: "AI가 수영 데이터를 분석하고 있습니다...")
+                        .padding()
+                } else if !viewModel.feedback.isEmpty {
+                    Text(viewModel.feedback)
+                        .padding()
+                } else if let errorMessage = viewModel.errorMessage {
+                    Text("⚠️ " + errorMessage)
+                        .foregroundColor(.red)
+                        .font(.body)
+                        .padding()
+                }
             }
             
             Button(action: {
-                withAnimation(.spring(duration: 0.3)) {
-                    isExpanded.toggle()
+                if !isExpanded {
+                    if !viewModel.feedback.isEmpty {
+                        withAnimation(.spring(duration: 0.3)) {
+                            isExpanded = true
+                        }
+                    } else {
+                        if viewModel.checkUsageLimit() {
+                            withAnimation(.spring(duration: 0.3)) {
+                                isExpanded = true
+                            }
+                            viewModel.fetchFeedback(from: swimData)
+                        }
+                    }
+                } else {
+                    withAnimation(.spring(duration: 0.3)) {
+                        isExpanded = false
+                    }
                 }
             }) {
                 HStack {
@@ -38,3 +63,4 @@ struct ExpandableBox<Content: View>: View {
         .padding(.horizontal)
     }
 }
+
