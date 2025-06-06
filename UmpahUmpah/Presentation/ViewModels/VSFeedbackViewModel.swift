@@ -20,7 +20,7 @@ final class VSFeedbackViewModel: ObservableObject {
         self.useCase = useCase
     }
     
-    /// 펼치기 전 사용량 제한 체크 
+    /// 펼치기 전 사용량 제한 체크
     func checkUsageLimit() -> Bool {
         // ChatGPTRepositoryImpl 직접 접근 (임시)
         let repository = ChatGPTRepositoryImpl()
@@ -45,6 +45,7 @@ final class VSFeedbackViewModel: ObservableObject {
             do {
                 let result = try await useCase.execute(from: dailyInfo)
                 feedback = result
+                saveFeedbackForToday(result)
             } catch let error as APILimitError {
                 // 사용량 제한 에러 처리
                 errorMessage = error.localizedDescription
@@ -56,6 +57,20 @@ final class VSFeedbackViewModel: ObservableObject {
             }
             
             isLoading = false
+        }
+    }
+    
+    private func saveFeedbackForToday(_ feedback: String) {
+        let today = Date().formattedTodayDate().replacingOccurrences(of: ".", with: "-")
+        let key = "feedback_\(today)"
+        UserDefaults.standard.set(feedback, forKey: key)
+    }
+
+    func loadTodayFeedback() {
+        let today = Date().formattedTodayDate().replacingOccurrences(of: ".", with: "-")
+        let key = "feedback_\(today)"
+        if let savedFeedback = UserDefaults.standard.string(forKey: key) {
+            feedback = savedFeedback
         }
     }
 }
