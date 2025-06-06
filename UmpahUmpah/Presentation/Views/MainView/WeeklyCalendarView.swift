@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct WeeklyCalendarView: View {
-    private let calendar = Calendar.current
+    private var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
+        return calendar
+    }
+    
     private let today = Date()
 
     let onDateSelected: (Date) -> Void
@@ -17,6 +22,7 @@ struct WeeklyCalendarView: View {
     // 오늘 기준으로 왼쪽으로 6일
     private var weekDates: [Date] {
         (0 ..< 7).compactMap { offset in
+            // MARK : 테스트용 날짜 수정 offset
             calendar.date(byAdding: .day, value: offset - 14, to: today)
         }
     }
@@ -30,6 +36,7 @@ struct WeeklyCalendarView: View {
 
     private func dayString(for date: Date) -> String {
         let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         formatter.dateFormat = "d"
         return formatter.string(from: date)
     }
@@ -67,9 +74,9 @@ struct WeeklyCalendarView: View {
                 )
                 .onTapGesture {
                     selectedDate = date
-                    onDateSelected(date)
-                }
-            }
+                    let startOfDay = calendar.startOfDay(for: date)
+                    onDateSelected(startOfDay)
+                }            }
         }
         .padding(.bottom, 10)
         .frame(maxWidth: .infinity, maxHeight: 80, alignment: .center)
@@ -82,3 +89,4 @@ struct WeeklyCalendarView: View {
         print("날짜 선택됨: \(selectedDate)")
     }
 }
+
