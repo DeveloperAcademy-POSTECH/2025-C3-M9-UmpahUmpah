@@ -5,7 +5,7 @@ struct VSView: View {
         useCase: RequestFeedbackUseCaseImpl(repository: ChatGPTRepositoryImpl())
     )
     @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
-    
+
     // API 테스트용 목업 데이터
     private var mockDailyInfo: DailySwimmingInfo {
         let mockWorkout = SwimmingWorkout(
@@ -17,19 +17,19 @@ struct VSView: View {
             energy: 450, // 450kcal
             lapCount: 30
         )
-        
+
         let mockScore = SwimmingScore(
             stabilityScore: 85.5,
             strokeEfficiency: 2.1,
             immersionScore: 78.3
         )
-        
+
         let mockHeartRates = [
             HeartRateSample(bpm: 140, date: Date().addingTimeInterval(-1800)),
             HeartRateSample(bpm: 150, date: Date().addingTimeInterval(-900)),
             HeartRateSample(bpm: 145, date: Date())
         ]
-        
+
         let mockStrokeInfos = [
             StrokeInfo(
                 start: Date().addingTimeInterval(-3600),
@@ -38,7 +38,7 @@ struct VSView: View {
                 style: .freestyle
             )
         ]
-        
+
         return DailySwimmingInfo(
             date: Calendar.current.startOfDay(for: Date()),
             workout: mockWorkout,
@@ -60,7 +60,7 @@ struct VSView: View {
 
                 // 실제 데이터가 있으면 사용, 없으면 목업 데이터 사용
                 let dailyInfo = swimmingStatsViewModel.currentDailyInfo ?? mockDailyInfo
-                
+
                 ExpandableBox(
                     viewModel: viewModel,
                     swimData: dailyInfo
@@ -75,6 +75,9 @@ struct VSView: View {
 
                 .padding(.vertical, 10)
                 .padding(.horizontal)
+            }
+            .onAppear {
+                viewModel.loadTodayFeedback()
             }
         }
         .ignoresSafeArea()
