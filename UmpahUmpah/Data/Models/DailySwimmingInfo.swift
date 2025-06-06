@@ -2,7 +2,7 @@
 //  DailySwimmingInfo.swift
 //  UmpahUmpah
 //
-//  Created by yunsly on 6/5/25.
+//  Created by chang hyen yun on 6/5/25.
 //
 
 import Foundation

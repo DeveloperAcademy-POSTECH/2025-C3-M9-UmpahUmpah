@@ -15,7 +15,6 @@ struct SwimmingWorkout: Identifiable, Equatable {
     let distance: Double
     let energy: Double
     let lapCount: Int
-    
     var pacePer100m: Double {
         guard distance > 0 else { return 0 }
         return (duration / distance) * 100

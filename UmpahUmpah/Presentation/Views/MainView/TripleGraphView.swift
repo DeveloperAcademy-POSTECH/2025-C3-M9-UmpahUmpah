@@ -1,21 +1,22 @@
 import SwiftUI
 
 struct TripleGraphView: View {
-    @ObservedObject var viewModel: ChartViewModel
+    @ObservedObject var viewModel: SwimmingStatsViewModel
     
     var body: some View {
         VStack(alignment: .leading) {
-            GraphRowView(
-                title: "안정지수",
-                value: viewModel.stability,
-                color: .graph2
-            )
-            GraphRowView(
-                title: "몰입도",
-                value: viewModel.immersion,
-                color: .graph3
-            )
+                        GraphRowView(
+                            title: "안정지수",
+                            value: viewModel.dailySummaries.first?.score.stabilityScore ?? 0.0,
+                            color: .graph2
+                        )
+                        GraphRowView(
+                            title: "몰입도",
+                            value: viewModel.dailySummaries.first?.score.immersionScore ?? 0.0,
+                            color: .graph3
+                        )
         }
+ 
         .padding(.vertical, 22)
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)
@@ -29,7 +30,7 @@ struct TripleGraphView: View {
                         .stroke(Color.white.opacity(0.12), lineWidth: 7)
                 )
         )
-        StrokeEfficiencyView(value: viewModel.strokeEfficiency)
+        StrokeEfficiencyView(value: viewModel.dailySummaries.first?.score.strokeEfficiency ?? 0.0)
     }
 }
 
@@ -99,5 +100,5 @@ private struct StrokeEfficiencyView: View {
 }
 
 #Preview {
-    TripleGraphView(viewModel: ChartViewModel())
+    TripleGraphView(viewModel: SwimmingStatsViewModel() )
 }

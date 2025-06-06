@@ -1,24 +1,13 @@
 import SwiftUI
 
 struct VSView: View {
-    @StateObject private var viewModel = VSFeedbackViewModel(
-        useCase: RequestFeedbackUseCaseImpl(repository: ChatGPTRepositoryImpl())
-    )
-
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
                 // MARK: VS 점수 헤더
-
                 VSScoreSectionView()
 
-                    // MARK: 펼치는 박스
-
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-
+                // MARK: 펼치는 박스
                 ExpandableBox {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("🏊‍♂️ 스트로크 분석")
@@ -33,7 +22,6 @@ struct VSView: View {
                 .padding(.vertical, 20)
 
                 // MARK: 그래프들
-
                 ForEach(1 ... 10, id: \.self) { _ in
                     HorizontalGraph()
                 }

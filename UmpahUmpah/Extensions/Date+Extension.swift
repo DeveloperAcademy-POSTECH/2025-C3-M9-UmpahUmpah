@@ -1,8 +1,24 @@
 import SwiftUI
 
-// View Extension
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
+
+// Date ex
+extension Date {
+    func formattedTodayDate() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd."
+        return formatter.string(from: Date())
+    }
+    
+    var yesterday: Date {
+        Calendar.current.date(byAdding: .day, value: -1, to: self)!
+    }
+    
+    var day: Int {
+        Calendar.current.component(.day, from: self)
+    }
+    
+    var tomorrow: Date {
+        Calendar.current.date(byAdding: .day, value: 1, to: self)!
     }
 }
+
