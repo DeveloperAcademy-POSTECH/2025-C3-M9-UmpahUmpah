@@ -26,6 +26,9 @@ struct MainView: View {
                 WeeklyCalendarView { selectedDate in
                     print("날짜 선택됨: \(selectedDate)")
                     swimmingStatsViewModel.startDate = selectedDate
+                    Task {
+                        await swimmingStatsViewModel.calculateDailySummaries(for: [selectedDate])
+                    }
                 }
                 
                 if !isDataEmpty {
@@ -49,3 +52,4 @@ struct MainView: View {
 #Preview {
     MainView()
 }
+
