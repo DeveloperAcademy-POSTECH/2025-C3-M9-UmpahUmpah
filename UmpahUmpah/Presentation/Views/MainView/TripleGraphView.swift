@@ -47,7 +47,7 @@ private struct GraphRowView: View {
             ZStack(alignment: .leading) {
                 Rectangle()
                     .fill(color)
-                    .frame(width: CGFloat(value) * maxWidth, height: barHeight)
+                    .frame(width: CGFloat(value / 100) * maxWidth, height: barHeight)
                     .cornerRadius(10, corners: [.topRight, .bottomRight])
                 
                 Text("\(Int(Double(value) * 100))")
