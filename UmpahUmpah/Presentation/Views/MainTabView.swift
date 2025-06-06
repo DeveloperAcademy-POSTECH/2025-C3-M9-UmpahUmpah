@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @StateObject var viewModel = TabViewModel()
+    @StateObject var swimmingStatsViewModel = SwimmingStatsViewModel()
     
     var body: some View {
         
@@ -22,6 +23,7 @@ struct MainTabView: View {
                 }
                 .tag(TabSelection.setting)
         }
+        .environmentObject(swimmingStatsViewModel)
         .task {
             await viewModel.requestAuthorization()
         }

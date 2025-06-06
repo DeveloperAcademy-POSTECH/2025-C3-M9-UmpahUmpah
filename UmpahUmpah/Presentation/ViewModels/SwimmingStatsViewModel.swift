@@ -22,7 +22,13 @@ final class SwimmingStatsViewModel: ObservableObject {
     @Published var swimmingScore: SwimmingScore?
     @Published var selectedWorkout: SwimmingWorkout?
     @Published var dailySummaries: [DailySwimmingInfo] = []
-
+    
+    // 오늘 날짜의 수영 데이터 반환
+    var currentDailyInfo: DailySwimmingInfo? {
+        let today = Calendar.current.startOfDay(for: Date())
+        return dailySummaries.first { Calendar.current.startOfDay(for: $0.date) == today }
+    }
+    
     private let repository: SwimmingRepository = SwimmingRepositoryImpl()
     private let scoreUseCase: CalculateSwimmingScoresUseCase = CalculateSwimmingScoresUseCaseImpl()
 
