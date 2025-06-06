@@ -10,7 +10,7 @@ import SwiftUI
 struct MainView: View {
     
     @StateObject private var chartViewModel = ChartViewModel()
-    @StateObject private var swimmingStatsViewModel = SwimmingStatsViewModel()
+    @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
     @State private var isDataEmpty = false
     
 
@@ -27,22 +27,38 @@ struct MainView: View {
                     print("날짜 선택됨: \(selectedDate)")
                     swimmingStatsViewModel.startDate = selectedDate
                     Task {
-                        await swimmingStatsViewModel.calculateDailySummaries(for: [selectedDate])
+                        await swimmingStatsViewModel.loadStats()
+                        //await swimmingStatsViewModel.calculateDailySummaries(for: [selectedDate])
                     }
                 }
                 
-                if !isDataEmpty {
-                    SwimMetricGridView(chartViewModel: chartViewModel, swimmingStatsViewModel: swimmingStatsViewModel)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 20)
-                } else {
+                switch swimmingStatsViewModel.currentState {
+                case .loading:
+                    ProgressView("데이터를 불러오는 중이에요…")
+                        .frame(maxHeight: .infinity)
+
+                case .noPermission:
                     Spacer()
-                    Text("아직 수집된 데이터가 없어요!\n 설정에서 접근 권한을 확인해 주세요.")
+                    Text("앗! 접근 권한이 없어요\n설정에서 건강 데이터 접근을 허용해 주세요.")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(Color.subGray)
                         .multilineTextAlignment(.center)
                     Spacer()
+
+                case .noWorkout:
+                    Spacer()
+                    Text("이 날은 수영 기록이 없어요!\n🏊")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(Color.subGray)
+                        .multilineTextAlignment(.center)
+                    Spacer()
+
+                case .hasData:
+                    SwimMetricGridView(chartViewModel: chartViewModel)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 20)
                 }
+
             }
             Spacer()
         }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SwimMetricGridView: View {
     @ObservedObject var chartViewModel: ChartViewModel
-    @ObservedObject var swimmingStatsViewModel: SwimmingStatsViewModel
+    @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
 
     var body: some View {
         VStack(spacing: 20) {
@@ -40,6 +40,6 @@ struct SwimMetricGridView: View {
     }
 }
 
-#Preview {
-    SwimMetricGridView(chartViewModel: ChartViewModel(), swimmingStatsViewModel: SwimmingStatsViewModel())
-}
+//#Preview {
+//    SwimMetricGridView(chartViewModel: ChartViewModel(), swimmingStatsViewModel: SwimmingStatsViewModel())
+//}
