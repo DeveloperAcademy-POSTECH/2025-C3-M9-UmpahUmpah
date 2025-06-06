@@ -10,6 +10,15 @@ import Foundation
 
 @MainActor
 final class SwimmingStatsViewModel: ObservableObject {
+    
+    enum SwimmingDataState {
+        case loading
+        case noPermission
+        case noWorkout
+        case hasData
+    }
+
+    
     @Published var workouts: [SwimmingWorkout] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -22,16 +31,17 @@ final class SwimmingStatsViewModel: ObservableObject {
     @Published var swimmingScore: SwimmingScore?
     @Published var selectedWorkout: SwimmingWorkout?
     @Published var dailySummaries: [DailySwimmingInfo] = []
+    @Published var currentState: SwimmingDataState = .loading
     
-    // 오늘 날짜의 수영 데이터 반환
+    // 선택된 날짜의 수영 데이터 반환
     var currentDailyInfo: DailySwimmingInfo? {
-        let today = Calendar.current.startOfDay(for: Date())
-        return dailySummaries.first { Calendar.current.startOfDay(for: $0.date) == today }
+        let day = Calendar.current.startOfDay(for: startDate)
+        return dailySummaries.first { Calendar.current.startOfDay(for: $0.date) == day }
     }
+    
     
     private let repository: SwimmingRepository = SwimmingRepositoryImpl()
     private let scoreUseCase: CalculateSwimmingScoresUseCase = CalculateSwimmingScoresUseCaseImpl()
-
     private let strokeData = SwimmingStrokeDataSource()
 
     init() {
@@ -39,6 +49,19 @@ final class SwimmingStatsViewModel: ObservableObject {
         let startDate = Date() // self.startDate 대신 새 지역변수로 초기값 복사
         let startOfDay = calendar.startOfDay(for: startDate)
         endDate = calendar.date(byAdding: DateComponents(day: 1, second: -1), to: startOfDay)!
+    }
+    
+    private func updateCurrentState() {
+        if isLoading {
+            currentState = .loading
+        } else if let error = errorMessage,
+                  error.contains("authorization") || error.contains("권한") {
+            currentState = .noPermission
+        } else if currentDailyInfo == nil {
+            currentState = .noWorkout
+        } else {
+            currentState = .hasData
+        }
     }
 
     func loadStrokeData() async {
@@ -58,6 +81,7 @@ final class SwimmingStatsViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+        updateCurrentState()
     }
 
     func loadStats() async {
@@ -90,6 +114,7 @@ final class SwimmingStatsViewModel: ObservableObject {
         }
 
         isLoading = false
+        updateCurrentState()
     }
 
     func updateScoreForSelectedWorkout() async {
@@ -114,6 +139,7 @@ final class SwimmingStatsViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+        updateCurrentState()
     }
 
     func calculateDailySummaries(for selectedDates: [Date]) async {
@@ -185,5 +211,6 @@ final class SwimmingStatsViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+        updateCurrentState()
     }
 }
