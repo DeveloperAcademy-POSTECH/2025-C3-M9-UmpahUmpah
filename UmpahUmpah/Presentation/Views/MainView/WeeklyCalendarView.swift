@@ -23,7 +23,7 @@ struct WeeklyCalendarView: View {
     private var weekDates: [Date] {
         (0 ..< 7).compactMap { offset in
             // MARK : 테스트용 날짜 수정 offset
-            calendar.date(byAdding: .day, value: offset - 14, to: today)
+            calendar.date(byAdding: .day, value: offset - 6, to: today)
         }
     }
 

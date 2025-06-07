@@ -31,7 +31,14 @@ struct MainView: View {
                         //await swimmingStatsViewModel.calculateDailySummaries(for: [selectedDate])
                     }
                 }
-                
+                .onAppear {
+                    let today = Calendar.current.startOfDay(for: Date())
+                    swimmingStatsViewModel.startDate = today
+                    Task {
+                        await swimmingStatsViewModel.loadStats()
+                    }
+                }
+
                 switch swimmingStatsViewModel.currentState {
                 case .loading:
                     ProgressView("데이터를 불러오는 중이에요…")
