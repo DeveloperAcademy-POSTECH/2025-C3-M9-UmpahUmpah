@@ -50,7 +50,7 @@ private struct GraphRowView: View {
                     .frame(width: CGFloat(value / 100) * maxWidth, height: barHeight)
                     .cornerRadius(10, corners: [.topRight, .bottomRight])
                 
-                Text("\(Int(Double(value) * 100))")
+                Text("\(Int(Double(value))) 점")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
                     .padding(.leading, 8)
