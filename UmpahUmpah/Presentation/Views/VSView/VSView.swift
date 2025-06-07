@@ -139,6 +139,7 @@ struct VSView: View {
                     .padding(5)
                 }
             }
+            .padding(.bottom, 100)
         }
         .ignoresSafeArea(edges: .top)
         .onAppear {

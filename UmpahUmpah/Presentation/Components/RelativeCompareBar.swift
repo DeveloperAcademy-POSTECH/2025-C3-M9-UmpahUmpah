@@ -5,26 +5,17 @@ struct RelativeCompareBar: View {
     var oldValue: Double
     var newValue: Double
     var isLowerGood: Bool
-    
-    init(oldValue: Double, newValue: Double, isLowerGood: Bool = false) {
-        self.oldValue = oldValue
-        self.newValue = newValue
-        self.isLowerGood = isLowerGood
-    }
-    
+    let oldText: String
+    let newText: String
+     
     var body: some View {
-        let oldFill = isLowerGood ? (newValue > oldValue ? Color.accent2 : Color.subLigtGray) :
-                                  (newValue < oldValue ? Color.accent2 : Color.subLigtGray)
-        let newFill = isLowerGood ? (newValue < oldValue ? Color.accent2 : Color.subLigtGray) :
-                                  (newValue > oldValue ? Color.accent2 : Color.subLigtGray)
-        
         renderBarHStack(
             oldValue: oldValue,
             newValue: newValue,
-            oldText: "\(Int(oldValue))",
-            newText: "\(Int(newValue))",
-            oldFill: oldFill,
-            newFill: newFill
+            oldText: oldText,
+            newText: newText,
+            oldFill: isLowerGood ? (newValue > oldValue ? .accent2 : Color.subLigtGray) : (newValue < oldValue ? .accent2 : Color.subLigtGray),
+            newFill: isLowerGood ? (newValue < oldValue ? .accent2 : Color.subLigtGray) : (newValue > oldValue ? .accent2 : Color.subLigtGray)
         )
     }
 }

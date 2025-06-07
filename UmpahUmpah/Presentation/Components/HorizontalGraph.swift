@@ -9,12 +9,27 @@ struct HorizontalGraph: View {
     var newValue: Double = 1150
     var title: String = "총거리"
     
+    // 단위 결정 함수
+    private func unitForTitle(_ title: String) -> String {
+        switch title {
+        case "총거리", "스트로크 효율성":
+            return "m"
+        case "칼로리":
+            return "kcal"
+        case "심박수":
+            return "bpm"
+        default:
+            return ""
+        }
+    }
+    
     var body: some View {
         ZStack(alignment: .top) {
             RoundedRectangle(cornerRadius: 16)
                 .fill(.white)
                 .frame(height: 100)
                 .shadow(radius: 4)
+            
             VStack(spacing: 8) {
                 ZStack {
                     HStack {
@@ -24,22 +39,23 @@ struct HorizontalGraph: View {
                             .padding(.top, 12)
                         
                         if title == "운동시간" {
-                            Text("\(newValue > oldValue ? "+" : "-")\(String(format: "%02d:%02d:%02d", Int(oldValue) / 3600, (Int(oldValue) % 3600) / 60, Int(oldValue) % 60))")
+                            Text("\(newValue > oldValue ? "+" : "-")\(String(format: "%02d:%02d:%02d", Int(oldValue - newValue) / 3600, (Int(oldValue - newValue) % 3600) / 60, Int(oldValue - newValue) % 60))")
                                 .font(.caption)
                                 .fontWeight(.bold)
                                 .foregroundStyle(newValue > oldValue ? .red : .gray)
                                 .padding(.top, 10)
                         } else {
-                            //작은게 좋은 값인 경우 처리
-                            if title == "심박수" || title == "SWOLF"{
-                                Text("\(newValue > oldValue ? "+" : "")\(Int(newValue - oldValue))")
+                            // 단위를 추가하여 차이값 표시
+                            let difference = title == "스트로크 효율성" ? String(format: "%.2f", Double(newValue - oldValue)) : String(Int(newValue - oldValue))
+                            let unit = unitForTitle(title)
+                            if title == "심박수" || title == "SWOLF" {
+                                Text("\(newValue > oldValue ? "+" : "")\(difference)\(unit)")
                                     .font(.caption)
                                     .fontWeight(.bold)
                                     .foregroundStyle(newValue < oldValue ? .red : .gray)
                                     .padding(.top, 10)
-                            }
-                            else{
-                                Text("\(newValue > oldValue ? "+" : "")\(Int(newValue - oldValue))")
+                            } else {
+                                Text("\(newValue > oldValue ? "+" : "")\(difference)\(unit)")
                                     .font(.caption)
                                     .fontWeight(.bold)
                                     .foregroundStyle(newValue > oldValue ? .red : .gray)
@@ -60,10 +76,16 @@ struct HorizontalGraph: View {
                 if comparableItem.contains(title) {
                     CompareBar(oldValue: oldValue, newValue: newValue)
                 } else if relativeItem.contains(title) {
+                    // oldText와 newText에 단위 추가
+                    let unit = unitForTitle(title)
+                    let oldText = title == "스트로크 효율성" ? String(format:"%.2f", Double(oldValue)) + unit : "\(Int(oldValue))\(unit)"
+                    let newText = title == "스트로크 효율성" ? String(format:"%.2f", Double(newValue)) + unit : "\(Int(newValue))\(unit)"
                     RelativeCompareBar(
                         oldValue: oldValue,
                         newValue: newValue,
-                        isLowerGood: title == "심박수" || title == "SWOLF"
+                        isLowerGood: title == "심박수" || title == "SWOLF",
+                        oldText: oldText,
+                        newText: newText
                     )
                 } else if title == "운동시간" {
                     TimeCompareBar(oldValue: oldValue, newValue: newValue)
