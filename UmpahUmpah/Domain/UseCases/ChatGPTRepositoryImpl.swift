@@ -8,12 +8,13 @@
 import Foundation
 
 final class ChatGPTRepositoryImpl: ChatGPTRepository {
-    
     // MARK: - API 키 보안 처리
+
     private var apiKey: String {
         guard let path = Bundle.main.path(forResource: "Config", ofType: "plist"),
               let config = NSDictionary(contentsOfFile: path),
-              let key = config["OPENAI_API_KEY"] as? String else {
+              let key = config["OPENAI_API_KEY"] as? String
+        else {
             fatalError("⚠️ Config.plist에서 OPENAI_API_KEY를 찾을 수 없습니다!")
         }
         return key
@@ -22,8 +23,9 @@ final class ChatGPTRepositoryImpl: ChatGPTRepository {
     private let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
     
     // MARK: - 사용량 제한, 건드리지 마세요!!
-    private let dailyLimit = 10
 
+    private let dailyLimit = 10
+    
     func requestFeedback(prompt: String) async throws -> String {
         // 사용량 체크
         try checkUsageLimit()
@@ -32,7 +34,7 @@ final class ChatGPTRepositoryImpl: ChatGPTRepository {
         request.httpMethod = "POST"
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
+        
         let requestBody: [String: Any] = [
             "model": "gpt-4o-mini",
             "messages": [
@@ -42,25 +44,29 @@ final class ChatGPTRepositoryImpl: ChatGPTRepository {
             "max_tokens": 300,
             "temperature": 0.7
         ]
-
+        
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [])
-
-        let (data, _) = try await URLSession.shared.data(for: request)
-
-        guard
-            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-            let choices = json["choices"] as? [[String: Any]],
-            let first = choices.first,
-            let message = first["message"] as? [String: Any],
-            let content = message["content"] as? String
-        else {
-            throw URLError(.badServerResponse)
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
+            guard
+                let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                let choices = json["choices"] as? [[String: Any]],
+                let first = choices.first,
+                let message = first["message"] as? [String: Any],
+                let content = message["content"] as? String
+            else {
+                throw URLError(.badServerResponse)
+            }
+            
+            // 성공 시 사용량 기록
+            recordSuccessfulCall()
+            
+            return content
+        } catch {
+            throw error
         }
-        
-        // 성공 시 사용량 기록
-        recordSuccessfulCall()
-        
-        return content
     }
     
     // MARK: - 사용량 제한 로직
@@ -93,6 +99,7 @@ final class ChatGPTRepositoryImpl: ChatGPTRepository {
     }
     
     // MARK: - 디버그용 리셋 함수
+
     func resetUsageForTesting() {
         let today = Date().formattedTodayDate().replacingOccurrences(of: ".", with: "-")
         UserDefaults.standard.removeObject(forKey: "api_usage_\(today)")

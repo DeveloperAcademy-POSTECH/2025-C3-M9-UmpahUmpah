@@ -4,9 +4,12 @@ struct VSView: View {
     @StateObject private var viewModel = VSFeedbackViewModel(
         useCase: RequestFeedbackUseCaseImpl(repository: ChatGPTRepositoryImpl())
     )
+  
+    @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
     @StateObject var oldSwimmingStatsViewModel: SwimmingStatsViewModel = SwimmingStatsViewModel()
     @StateObject var newSwimmingStatsViewModel: SwimmingStatsViewModel = SwimmingStatsViewModel()
     
+
     
     // API 테스트용 목업 데이터
     private var mockDailyInfo: DailySwimmingInfo {
@@ -71,6 +74,7 @@ struct VSView: View {
                 .padding(.vertical, 20)
                 
                 // MARK: 그래프들
+
                 Group{
                     HorizontalGraph(
                         oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.stabilityScore ?? 1.0,
@@ -146,6 +150,18 @@ struct VSView: View {
                 await newSwimmingStatsViewModel.loadLatestSwimmingData()
             }
         }
+        .alert("네트워크 오류", isPresented: $viewModel.showErrorAlert) {
+            Button("확인") {
+                viewModel.showErrorAlert = false
+            }
+            Button("재시도") {
+                let dailyInfo = swimmingStatsViewModel.currentDailyInfo ?? mockDailyInfo
+                viewModel.fetchFeedback(from: dailyInfo)
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
+        .ignoresSafeArea()
     }
 }
 

@@ -14,11 +14,6 @@ struct ExpandableBox: View {
                 } else if !viewModel.feedback.isEmpty {
                     Text(viewModel.feedback)
                         .padding()
-                } else if let errorMessage = viewModel.errorMessage {
-                    Text("⚠️ " + errorMessage)
-                        .foregroundColor(.red)
-                        .font(.body)
-                        .padding()
                 }
             }
             
@@ -29,12 +24,14 @@ struct ExpandableBox: View {
                             isExpanded = true
                         }
                     } else {
-                        if viewModel.checkUsageLimit() {
-                            withAnimation(.spring(duration: 0.3)) {
-                                isExpanded = true
-                            }
-                            viewModel.fetchFeedback(from: swimData)
+                        if !viewModel.checkUsageLimit() {
+                            return
                         }
+                        
+                        withAnimation(.spring(duration: 0.3)) {
+                            isExpanded = true
+                        }
+                        viewModel.fetchFeedback(from: swimData)
                     }
                 } else {
                     withAnimation(.spring(duration: 0.3)) {
@@ -61,6 +58,12 @@ struct ExpandableBox: View {
                 .stroke(Color.accent1, lineWidth: 2)
         )
         .padding(.horizontal)
+        .onChange(of: viewModel.showErrorAlert) { show in
+            if show {
+                withAnimation(.spring(duration: 0.3)) {
+                    isExpanded = false
+                }
+            }
+        }
     }
 }
-

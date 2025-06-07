@@ -13,6 +13,7 @@ final class VSFeedbackViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var showLimitAlert: Bool = false
+    @Published var showErrorAlert: Bool = false
     
     private let useCase: RequestFeedbackUseCase
     
@@ -22,13 +23,11 @@ final class VSFeedbackViewModel: ObservableObject {
     
     /// 펼치기 전 사용량 제한 체크
     func checkUsageLimit() -> Bool {
-        // ChatGPTRepositoryImpl 직접 접근 (임시)
         let repository = ChatGPTRepositoryImpl()
         do {
             try repository.checkUsageLimitOnly()
             return true // 사용 가능
         } catch let error as APILimitError {
-            // Toast 메시지 표시
             print("⚠️ API 제한: \(error.localizedDescription)")
             return false // 사용 불가
         } catch {
@@ -46,14 +45,13 @@ final class VSFeedbackViewModel: ObservableObject {
                 let result = try await useCase.execute(from: dailyInfo)
                 feedback = result
                 saveFeedbackForToday(result)
+            } catch let urlError as URLError where urlError.code == .notConnectedToInternet {
+                errorMessage = "네트워크 연결을 확인해주세요"
+                showErrorAlert = true
             } catch let error as APILimitError {
-                // 사용량 제한 에러 처리
                 errorMessage = error.localizedDescription
-                showLimitAlert = true
-                print("⚠️ API 제한: \(error.localizedDescription)")
             } catch {
                 errorMessage = "피드백을 가져오는데 실패했습니다: \(error.localizedDescription)"
-                print("❌ API 에러: \(error)")
             }
             
             isLoading = false
@@ -65,7 +63,7 @@ final class VSFeedbackViewModel: ObservableObject {
         let key = "feedback_\(today)"
         UserDefaults.standard.set(feedback, forKey: key)
     }
-
+    
     func loadTodayFeedback() {
         let today = Date().formattedTodayDate().replacingOccurrences(of: ".", with: "-")
         let key = "feedback_\(today)"
