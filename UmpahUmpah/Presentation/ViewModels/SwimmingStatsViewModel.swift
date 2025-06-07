@@ -5,12 +5,10 @@
 //  Created by chang hyen yun on 6/3/25.
 //
 
-// 삭제 예정
 import Foundation
 
 @MainActor
 final class SwimmingStatsViewModel: ObservableObject {
-    
     enum SwimmingDataState {
         case loading
         case noPermission
@@ -18,12 +16,9 @@ final class SwimmingStatsViewModel: ObservableObject {
         case hasData
     }
 
-    
     @Published var workouts: [SwimmingWorkout] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
-
-    // 추가
     @Published var selectedStroke: SwimmingStrokeType? = nil
     @Published var startDate: Date = .init()
     @Published var endDate: Date
@@ -32,14 +27,13 @@ final class SwimmingStatsViewModel: ObservableObject {
     @Published var selectedWorkout: SwimmingWorkout?
     @Published var dailySummaries: [DailySwimmingInfo] = []
     @Published var currentState: SwimmingDataState = .loading
-    
+
     // 선택된 날짜의 수영 데이터 반환
     var currentDailyInfo: DailySwimmingInfo? {
         let day = Calendar.current.startOfDay(for: startDate)
         return dailySummaries.first { Calendar.current.startOfDay(for: $0.date) == day }
     }
-    
-    
+
     private let repository: SwimmingRepository = SwimmingRepositoryImpl()
     private let scoreUseCase: CalculateSwimmingScoresUseCase = CalculateSwimmingScoresUseCaseImpl()
     private let strokeData = SwimmingStrokeDataSource()
@@ -50,7 +44,99 @@ final class SwimmingStatsViewModel: ObservableObject {
         let startOfDay = calendar.startOfDay(for: startDate)
         endDate = calendar.date(byAdding: DateComponents(day: 1, second: -1), to: startOfDay)!
     }
-    
+
+    func loadStats(for date: Date) async {
+        // 입력받은 날짜로 startDate 변경
+        startDate = date
+        // 기존의 loadStats() 호출
+        await loadStats()
+    }
+
+    func loadSwimmingData(for date: Date) async {
+        // 입력된 날짜로 startDate 설정
+        startDate = date
+        
+        // 데이터 로드
+        await loadStats()
+        
+        // 선택된 워크아웃에 대한 점수 업데이트
+        await updateScoreForSelectedWorkout()
+        
+        // 스트로크 데이터 로드
+        await loadStrokeData()
+    }
+
+    func loadLatestSwimmingData() async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
+            
+            // 최근 1년간 워크아웃 조회
+            let workouts = try await repository.fetchSwimmingWorkouts(
+                start: calendar.date(byAdding: .year, value: -1, to: Date())!,
+                end: Date(),
+                strokeType: nil
+            )
+            
+            // 시작 날짜 기준으로 내림차순 정렬
+            let sortedWorkouts = workouts.sorted { $0.startDate > $1.startDate }
+            
+            // 가장 최근 워크아웃 날짜 (n=1)
+            if let latestDate = sortedWorkouts.first?.startDate {
+                await loadSwimmingData(for: latestDate)
+            } else {
+                errorMessage = "수영 데이터가 없습니다."
+                currentState = .noWorkout
+                isLoading = false
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+            currentState = .noPermission
+            isLoading = false
+        }
+        
+        updateCurrentState()
+    }
+
+    func loadSecondLatestSwimmingData() async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
+            
+            // 최근 1년간 워크아웃 조회
+            let workouts = try await repository.fetchSwimmingWorkouts(
+                start: calendar.date(byAdding: .year, value: -1, to: Date())!,
+                end: Date(),
+                strokeType: nil
+            )
+            
+            // 시작 날짜 기준으로 내림차순 정렬
+            let sortedWorkouts = workouts.sorted { $0.startDate > $1.startDate }
+            
+            // 두 번째로 최근 워크아웃 날짜 (n=2)
+            if sortedWorkouts.count >= 2{
+                let secondLatestDate = sortedWorkouts[1].startDate
+                await loadSwimmingData(for: secondLatestDate)
+            } else {
+                errorMessage = "두 번째로 최근 수영 데이터가 없습니다."
+                currentState = .noWorkout
+                isLoading = false
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+            currentState = .noPermission
+            isLoading = false
+        }
+        
+        updateCurrentState()
+    }
+
     private func updateCurrentState() {
         if isLoading {
             currentState = .loading

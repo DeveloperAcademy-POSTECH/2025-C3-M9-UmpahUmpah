@@ -15,7 +15,6 @@ struct HorizontalGraph: View {
                 .fill(.white)
                 .frame(height: 100)
                 .shadow(radius: 4)
-            
             VStack(spacing: 8) {
                 ZStack {
                     HStack {
@@ -31,11 +30,21 @@ struct HorizontalGraph: View {
                                 .foregroundStyle(newValue > oldValue ? .red : .gray)
                                 .padding(.top, 10)
                         } else {
-                            Text("\(newValue > oldValue ? "+" : "")\(Int(newValue - oldValue))")
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .foregroundStyle(newValue > oldValue ? .red : .gray)
-                                .padding(.top, 10)
+                            //작은게 좋은 값인 경우 처리
+                            if title == "심박수" || title == "SWOLF"{
+                                Text("\(newValue > oldValue ? "+" : "")\(Int(newValue - oldValue))")
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(newValue < oldValue ? .red : .gray)
+                                    .padding(.top, 10)
+                            }
+                            else{
+                                Text("\(newValue > oldValue ? "+" : "")\(Int(newValue - oldValue))")
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(newValue > oldValue ? .red : .gray)
+                                    .padding(.top, 10)
+                            }
                         }
                     }
                     
@@ -112,6 +121,7 @@ func renderBarHStack(oldValue: Double, newValue: Double, oldText: String, newTex
     }
     .frame(height: 36)
     .padding(.top, 4)
+    
 }
 
 #Preview {
