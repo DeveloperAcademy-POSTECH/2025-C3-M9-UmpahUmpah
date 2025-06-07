@@ -11,8 +11,8 @@ struct TimeCompareBar: View {
             newValue: newValue,
             oldText: formattedTime(oldValue),
             newText: formattedTime(newValue),
-            oldFill: Color.subLigtGray,
-            newFill: Color.blue
+            oldFill: oldValue < newValue ? Color.subLigtGray : Color.accent2,
+            newFill: oldValue > newValue ? Color.subLigtGray : Color.accent2
         )
     }
     

@@ -11,8 +11,8 @@ struct CompareBar: View {
             newValue: newValue,
             oldText: "\(Int(oldValue))",
             newText: "\(Int(newValue))",
-            oldFill: Color.subLigtGray,
-            newFill: Color.blue
+            oldFill: oldValue < newValue ? Color.subLigtGray : Color.accent2,
+            newFill: oldValue > newValue ? Color.subLigtGray : Color.accent2
         )
     }
 }
