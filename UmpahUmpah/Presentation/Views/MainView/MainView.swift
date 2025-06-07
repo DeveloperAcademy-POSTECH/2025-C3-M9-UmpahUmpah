@@ -18,10 +18,23 @@ struct MainView: View {
         VStack {
             VStack(spacing: 0) {
                 // MARK: Header Section
-
-                HeaderSectionView(
-                    dateText: Date().formattedTodayDate(), message: "오늘도 음파음파"
-                )
+                HStack {
+                    HeaderSectionView(dateText:Date().formattedTodayDate(),  message: "오늘도 음파음파")
+                    MonthCalendarButton(onDateSelected: { selectedDate in
+                        swimmingStatsViewModel.startDate = selectedDate
+                        Task {
+                            await swimmingStatsViewModel.loadStats()
+                            
+                        }
+                        
+                    }, label:{
+                        Image(systemName: "calendar")
+                            .imageScale(.large)
+                            .foregroundStyle(.white)
+                    }).padding(.trailing, 20)
+                    
+                }.background(.brand)
+               
                 
                 WeeklyCalendarView { selectedDate in
                     print("날짜 선택됨: \(selectedDate)")
