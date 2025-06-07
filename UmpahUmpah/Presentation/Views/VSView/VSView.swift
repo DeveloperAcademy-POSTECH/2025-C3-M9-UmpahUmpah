@@ -4,7 +4,12 @@ struct VSView: View {
     @StateObject private var viewModel = VSFeedbackViewModel(
         useCase: RequestFeedbackUseCaseImpl(repository: ChatGPTRepositoryImpl())
     )
+  
     @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
+    @StateObject var oldSwimmingStatsViewModel: SwimmingStatsViewModel = SwimmingStatsViewModel()
+    @StateObject var newSwimmingStatsViewModel: SwimmingStatsViewModel = SwimmingStatsViewModel()
+    
+
     
     // API 테스트용 목업 데이터
     private var mockDailyInfo: DailySwimmingInfo {
@@ -54,12 +59,13 @@ struct VSView: View {
             VStack(spacing: 0) {
                 // MARK: VS 점수 헤더
                 
-                VSScoreSectionView()
+                VSScoreSectionView(oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 0.0,
+                                   newValue: newSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 0.0)
                 
                 // MARK: 펼치는 박스
                 
                 // 실제 데이터가 있으면 사용, 없으면 목업 데이터 사용
-                let dailyInfo = swimmingStatsViewModel.currentDailyInfo ?? mockDailyInfo
+                let dailyInfo = newSwimmingStatsViewModel.currentDailyInfo ?? mockDailyInfo
                 
                 ExpandableBox(
                     viewModel: viewModel,
@@ -68,16 +74,80 @@ struct VSView: View {
                 .padding(.vertical, 20)
                 
                 // MARK: 그래프들
-                
-                ForEach(1 ... 10, id: \.self) { _ in
-                    HorizontalGraph()
+
+                Group{
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.stabilityScore ?? 1.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.stabilityScore ?? 1.0,
+                        title: "안정지수"
+                    )
+                    .padding(5)
+                    
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.strokeEfficiency ?? 1.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.strokeEfficiency ?? 1.0,
+                        title: "스트로크 효율성"
+                    ).padding(5)
+                    
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.immersionScore ?? 1.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.immersionScore ?? 1.0,
+                        title: "몰입도 점수"
+                    )
+                    .padding(5)
+                    
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.duration ?? 3600.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.duration ?? 3200.0,
+                        title: "운동시간"
+                    )
+                    .padding(5)
+                    
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.distance ?? 100.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.distance ?? 90.0,
+                        title: "총거리"
+                    )
+                    .padding(5)
+                    
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
+                        title: "칼로리"
+                    )
+                    .padding(5)
+                    
+                    HorizontalGraph(
+                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 1),
+                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 1),
+                        title: "랩수"
+                    )
+                    .padding(5)
+                    
+                    HorizontalGraph(
+                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 1.0),
+                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 1.0),
+                        title: "심박수"
+                    )
+                    .padding(5)
+                    
+                    HorizontalGraph(
+                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1),
+                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1),
+                        title: "SWOLF"
+                    )
+                    .padding(5)
                 }
-                
-                .padding(.vertical, 10)
-                .padding(.horizontal)
             }
-            .onAppear {
-                viewModel.loadTodayFeedback()
+        }
+        .ignoresSafeArea(edges: .top)
+        .onAppear {
+            viewModel.loadTodayFeedback()
+            Task {
+                // oldSwimmingStatsViewModel은 두 번째로 최근 데이터 로드
+                await oldSwimmingStatsViewModel.loadSecondLatestSwimmingData()
+                // newSwimmingStatsViewModel은 가장 최근 데이터 로드
+                await newSwimmingStatsViewModel.loadLatestSwimmingData()
             }
         }
         .alert("네트워크 오류", isPresented: $viewModel.showErrorAlert) {
@@ -94,6 +164,7 @@ struct VSView: View {
         .ignoresSafeArea()
     }
 }
+
 
 #Preview {
     VSView()

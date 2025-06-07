@@ -5,16 +5,16 @@ struct TripleGraphView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-                        GraphRowView(
-                            title: "안정지수",
-                            value: viewModel.dailySummaries.first?.score.stabilityScore ?? 0.0,
-                            color: .graph2
-                        )
-                        GraphRowView(
-                            title: "몰입도",
-                            value: viewModel.dailySummaries.first?.score.immersionScore ?? 0.0,
-                            color: .graph3
-                        )
+            GraphRowView(
+                title: "안정지수",
+                value: viewModel.dailySummaries.first?.score.stabilityScore ?? 0.0,
+                color: .graph2
+            )
+            GraphRowView(
+                title: "몰입도",
+                value: viewModel.dailySummaries.first?.score.immersionScore ?? 0.0,
+                color: .graph3
+            )
         }
  
         .padding(.vertical, 22)
@@ -50,7 +50,7 @@ private struct GraphRowView: View {
                     .frame(width: CGFloat(value / 100) * maxWidth, height: barHeight)
                     .cornerRadius(10, corners: [.topRight, .bottomRight])
                 
-                Text("\(Int(Double(value) * 100))")
+                Text("\(Int(Double(value))) 점")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
                     .padding(.leading, 8)
