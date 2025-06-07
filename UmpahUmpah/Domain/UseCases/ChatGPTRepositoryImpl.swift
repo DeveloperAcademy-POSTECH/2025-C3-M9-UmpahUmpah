@@ -24,7 +24,7 @@ final class ChatGPTRepositoryImpl: ChatGPTRepository {
     
     // MARK: - 사용량 제한, 건드리지 마세요!!
 
-    private let dailyLimit = 10
+    private let dailyLimit = 15
     
     func requestFeedback(prompt: String) async throws -> String {
         // 사용량 체크
@@ -36,7 +36,7 @@ final class ChatGPTRepositoryImpl: ChatGPTRepository {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let requestBody: [String: Any] = [
-            "model": "gpt-4o-mini",
+            "model": "gpt-4o",
             "messages": [
                 ["role": "system", "content": "수영 트레이너로서 사용자의 건강 데이터를 기반으로 피드백을 제공해주세요. 응답은 반드시 직설적이되 친절하게 구성해주세요."],
                 ["role": "user", "content": prompt]
