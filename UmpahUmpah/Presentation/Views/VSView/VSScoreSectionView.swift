@@ -9,6 +9,14 @@ import SwiftUI
 
 
 struct VSScoreSectionView: View {
+    var oldValue: Int
+    var newValue: Int
+    
+    init(oldValue: Double, newValue: Double) {
+        self.oldValue = Int(oldValue)
+        self.newValue = Int(newValue)
+    }
+    
     var body: some View {
         HStack(){
             VStack{
@@ -18,7 +26,7 @@ struct VSScoreSectionView: View {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.white)
                     
-                    Text("80")
+                    Text("\(self.oldValue)")
                         .foregroundStyle(.subGray)
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -37,7 +45,7 @@ struct VSScoreSectionView: View {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.white)
                     
-                    Text("85")
+                    Text("\(self.newValue)")
                         .foregroundStyle(.accent2)
                         .font(.largeTitle)
                         .fontWeight(.bold)

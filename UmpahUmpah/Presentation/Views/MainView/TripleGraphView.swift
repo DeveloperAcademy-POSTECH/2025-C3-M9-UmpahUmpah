@@ -5,16 +5,16 @@ struct TripleGraphView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-                        GraphRowView(
-                            title: "안정지수",
-                            value: viewModel.dailySummaries.first?.score.stabilityScore ?? 0.0,
-                            color: .graph2
-                        )
-                        GraphRowView(
-                            title: "몰입도",
-                            value: viewModel.dailySummaries.first?.score.immersionScore ?? 0.0,
-                            color: .graph3
-                        )
+            GraphRowView(
+                title: "안정지수",
+                value: viewModel.dailySummaries.first?.score.stabilityScore ?? 0.0,
+                color: .graph2
+            )
+            GraphRowView(
+                title: "몰입도",
+                value: viewModel.dailySummaries.first?.score.immersionScore ?? 0.0,
+                color: .graph3
+            )
         }
  
         .padding(.vertical, 22)

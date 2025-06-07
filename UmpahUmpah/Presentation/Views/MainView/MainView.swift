@@ -54,7 +54,7 @@ struct MainView: View {
                     Spacer()
 
                 case .hasData:
-                    SwimMetricGridView(chartViewModel: chartViewModel)
+                    SwimMetricGridView()
                         .padding(.horizontal, 16)
                         .padding(.vertical, 20)
                 }
