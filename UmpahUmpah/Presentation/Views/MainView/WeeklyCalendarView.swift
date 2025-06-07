@@ -53,7 +53,7 @@ struct WeeklyCalendarView: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             ForEach(weekDates, id: \.self) { date in
                 VStack(spacing: 4) {
                     Text(weekdaySymbol(for: date))
@@ -79,6 +79,7 @@ struct WeeklyCalendarView: View {
                 }            }
         }
         .padding(.bottom, 10)
+        .padding(.horizontal, 16)
         .frame(maxWidth: .infinity, maxHeight: 80, alignment: .center)
         .background(.brand)
     }
