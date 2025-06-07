@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SwimMetricGridView: View {
-    @ObservedObject var chartViewModel: ChartViewModel
     @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
 
     var body: some View {
@@ -31,6 +30,8 @@ struct SwimMetricGridView: View {
                 )
                 SwimDataCell(title: "💓 심박수", value: String(format: "%.1f", swimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 0.0), unit: "bpm")
                 SwimDataCell(title: "🏊🏻 랩수", value: String(format: "%.1d", swimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 0.0), unit: "laps")
+            }.onChange(of: swimmingStatsViewModel.startDate) { _ in
+                    Task {await swimmingStatsViewModel.loadStats()}
             }
         }
     }
