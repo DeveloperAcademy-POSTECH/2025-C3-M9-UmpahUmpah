@@ -11,7 +11,7 @@ struct SwimMetricGridView: View {
     @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack() {
             TripleGraphView(viewModel: swimmingStatsViewModel)
 
             LazyVGrid(

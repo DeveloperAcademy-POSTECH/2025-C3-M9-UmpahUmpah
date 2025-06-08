@@ -53,6 +53,7 @@ struct MainView: View {
                     Spacer()
 
                 case .noWorkout:
+
                     Spacer()
                     Text("이 날은 수영 기록이 없어요!\n🏊")
                         .font(.system(size: 16, weight: .medium))
@@ -60,14 +61,15 @@ struct MainView: View {
                         .multilineTextAlignment(.center)
                     Spacer()
 
+
                 case .hasData:
                     SwimMetricGridView()
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 20)
+                        .padding(.vertical, 18)
                 }
 
             }
-            Spacer()
+            //Spacer()
         }
     }
 }

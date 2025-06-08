@@ -17,7 +17,7 @@ struct TripleGraphView: View {
             )
         }
  
-        .padding(.vertical, 22)
+        .padding(.vertical, 20)
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)
         .background(
