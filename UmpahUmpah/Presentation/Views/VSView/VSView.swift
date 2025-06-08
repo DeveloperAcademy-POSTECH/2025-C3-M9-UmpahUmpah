@@ -75,61 +75,30 @@ struct VSView: View {
                 
                 // MARK: 그래프들
 
-                Group{
+                VStack(){
                     HorizontalGraph(
                         oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.stabilityScore ?? 1.0,
                         newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.stabilityScore ?? 1.0,
                         title: "안정지수"
                     )
                     .padding(5)
-                    
+                    .zIndex(9)
+
                     HorizontalGraph(
                         oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.strokeEfficiency ?? 1.0,
                         newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.strokeEfficiency ?? 1.0,
                         title: "스트로크 효율성"
-                    ).padding(5)
-                    
+                    )
+                    .padding(5)
+                    .zIndex(8)
+
                     HorizontalGraph(
                         oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.immersionScore ?? 1.0,
                         newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.immersionScore ?? 1.0,
                         title: "몰입도 점수"
                     )
                     .padding(5)
-                    
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.duration ?? 3600.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.duration ?? 3200.0,
-                        title: "운동시간"
-                    )
-                    .padding(5)
-                    
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.distance ?? 100.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.distance ?? 90.0,
-                        title: "총거리"
-                    )
-                    .padding(5)
-                    
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
-                        title: "칼로리"
-                    )
-                    .padding(5)
-                    
-                    HorizontalGraph(
-                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 1),
-                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 1),
-                        title: "랩수"
-                    )
-                    .padding(5)
-                    
-                    HorizontalGraph(
-                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 1.0),
-                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 1.0),
-                        title: "심박수"
-                    )
-                    .padding(5)
+                    .zIndex(7)
                     
                     HorizontalGraph(
                         oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1),
@@ -137,6 +106,49 @@ struct VSView: View {
                         title: "SWOLF"
                     )
                     .padding(5)
+                    .zIndex(6)
+                    
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.duration ?? 3600.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.duration ?? 3200.0,
+                        title: "운동시간"
+                    )
+                    .padding(5)
+                    .zIndex(5)
+
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.distance ?? 100.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.distance ?? 90.0,
+                        title: "총거리"
+                    )
+                    .padding(5)
+                    .zIndex(4)
+
+                    HorizontalGraph(
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
+                        title: "칼로리"
+                    )
+                    .padding(5)
+                    .zIndex(3)
+
+                    HorizontalGraph(
+                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 1),
+                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 1),
+                        title: "랩수"
+                    )
+                    .padding(5)
+                    .zIndex(2)
+
+                    HorizontalGraph(
+                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 1.0),
+                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 1.0),
+                        title: "심박수"
+                    )
+                    .padding(5)
+                    .zIndex(1)
+
+                    
                 }
             }
             .padding(.bottom, 100)
