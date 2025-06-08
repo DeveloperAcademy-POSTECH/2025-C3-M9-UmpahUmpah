@@ -46,7 +46,7 @@ struct SettingView: View {
     
     private func headerView() -> some View {
         Text("설정")
-            .font(.title2)
+            .font(.title3)
             .fontWeight(.bold)
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
