@@ -123,6 +123,14 @@ struct HorizontalGraph: View {
                         .overlay(content: {
                             if showTooltip {
                                 VStack(spacing: 0) {
+                                    HStack {
+                                        CustomTriangleShape(width: 10, height: 20, radius: 1)
+                                            .frame(width: 10, height: 18)
+                                            .foregroundColor(.black.opacity(0.9))
+                                            .offset(x: 280) // 삼각형을 왼쪽으로 이동
+                                        Spacer()
+                                    }
+                                    
                                     if title == "안정지수" {
                                         TooltipBody(
                                             title: "안정 지수란?",
@@ -147,16 +155,12 @@ struct HorizontalGraph: View {
                                             text: "스트로크 수와 구간 시간의 합으로 계산되는 수영 효율 지표예요.\n낮을수록 빠르고 적은 동작으로 수영한 거예요.",
                                             showTooltip: $showTooltip
                                         )
-                                    }else{
-                                        TooltipBody(
-                                            title: "SWOLF 지수란?",
-                                            text: "스트로크 수와 구간 시간의 합으로 계산되는 수영 효율 지표예요.\n낮을수록 빠르고 적은 동작으로 수영한 거예요.",
-                                            showTooltip: $showTooltip
-                                        )
-                                    }
+                                    }else{}
                                 }
-                                .offset(x: -170, y: 80)
+                                
+                                .offset(x: -140, y: 100)
                             }
+                            
                         })
                         
                     }
@@ -185,6 +189,11 @@ struct HorizontalGraph: View {
                         .fontWeight(.bold)
                         .foregroundStyle(.gray)
                 }
+            }
+        }
+        .onTapGesture {
+            withAnimation(.easeInOut){
+                showTooltip = false
             }
         }
         .frame(height: 100)
