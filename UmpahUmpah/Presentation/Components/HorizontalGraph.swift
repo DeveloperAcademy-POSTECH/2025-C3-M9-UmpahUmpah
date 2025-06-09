@@ -9,6 +9,12 @@ struct HorizontalGraph: View {
     var newValue: Double = 1150
     var title: String = "총거리"
     
+    init(oldValue: Double, newValue: Double, title: String) {
+        self.oldValue = floor(oldValue * 100) / 100
+        self.newValue = floor(newValue * 100) / 100
+        self.title = title
+    }
+    
     // 단위 결정 함수
     private func unitForTitle(_ title: String) -> String {
         switch title {
@@ -20,6 +26,35 @@ struct HorizontalGraph: View {
             return "bpm"
         default:
             return ""
+        }
+    }
+    
+    func getValueDiff(_ oldValue: Double,_ newValue: Double) -> String {
+        let decimalOld = Decimal(oldValue)
+        let decimalNew = Decimal(newValue)
+        let diff = decimalNew - decimalOld
+
+        if title == "스트로크 효율성" {
+            // 소수점 둘째 자리 반올림
+            return NSDecimalNumber(decimal: diff).rounding(accordingToBehavior:
+                NSDecimalNumberHandler(roundingMode: .plain,
+                                       scale: 2,
+                                       raiseOnExactness: false,
+                                       raiseOnOverflow: false,
+                                       raiseOnUnderflow: false,
+                                       raiseOnDivideByZero: false)
+            ).stringValue
+        } else {
+            // 정수 반올림 후 문자열로 반환
+            let rounded = NSDecimalNumber(decimal: diff).rounding(accordingToBehavior:
+                NSDecimalNumberHandler(roundingMode: .plain,
+                                       scale: 0,
+                                       raiseOnExactness: false,
+                                       raiseOnOverflow: false,
+                                       raiseOnUnderflow: false,
+                                       raiseOnDivideByZero: false)
+            )
+            return rounded.stringValue
         }
     }
     
@@ -46,7 +81,8 @@ struct HorizontalGraph: View {
                                 .padding(.top, 10)
                         } else {
                             // 단위를 추가하여 차이값 표시
-                            let difference = title == "스트로크 효율성" ? String(format: "%.2f", Double(newValue - oldValue)) : String(Int(newValue - oldValue))
+//                            let difference = title == "스트로크 효율성" ? String(format: "%.2f", Double(newValue - oldValue)) : String(Int(newValue - oldValue))
+                            let difference = getValueDiff(oldValue, newValue)
                             let unit = unitForTitle(title)
                             if title == "심박수" || title == "SWOLF" {
                                 Text("\(newValue > oldValue ? "+" : "")\(difference)\(unit)")
@@ -78,8 +114,8 @@ struct HorizontalGraph: View {
                 } else if relativeItem.contains(title) {
                     // oldText와 newText에 단위 추가
                     let unit = unitForTitle(title)
-                    let oldText = title == "스트로크 효율성" ? String(format:"%.2f", Double(oldValue)) + unit : "\(Int(oldValue))\(unit)"
-                    let newText = title == "스트로크 효율성" ? String(format:"%.2f", Double(newValue)) + unit : "\(Int(newValue))\(unit)"
+                    let oldText = title == "스트로크 효율성" ? String(format:"%.2f", Double(oldValue)) + unit : "\(Int(round(oldValue)))\(unit)"
+                    let newText = title == "스트로크 효율성" ? String(format:"%.2f", Double(newValue)) + unit : "\(Int(round(newValue)))\(unit)"
                     RelativeCompareBar(
                         oldValue: oldValue,
                         newValue: newValue,
@@ -146,6 +182,6 @@ func renderBarHStack(oldValue: Double, newValue: Double, oldText: String, newTex
     
 }
 
-#Preview {
-    HorizontalGraph()
-}
+//#Preview {
+//    HorizontalGraph()
+//}

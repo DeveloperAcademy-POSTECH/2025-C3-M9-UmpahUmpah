@@ -9,8 +9,6 @@ struct VSView: View {
     @StateObject var oldSwimmingStatsViewModel: SwimmingStatsViewModel = SwimmingStatsViewModel()
     @StateObject var newSwimmingStatsViewModel: SwimmingStatsViewModel = SwimmingStatsViewModel()
     
-
-    
     // API 테스트용 목업 데이터
     private var mockDailyInfo: DailySwimmingInfo {
         let mockWorkout = SwimmingWorkout(
@@ -111,8 +109,8 @@ struct VSView: View {
                     .padding(5)
                     
                     HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.energy ?? 1.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.energy ?? 1.0,
                         title: "칼로리"
                     )
                     .padding(5)
@@ -132,8 +130,8 @@ struct VSView: View {
                     .padding(5)
                     
                     HorizontalGraph(
-                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1),
-                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1),
+                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1.0,
+                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1.0,
                         title: "SWOLF"
                     )
                     .padding(5)
