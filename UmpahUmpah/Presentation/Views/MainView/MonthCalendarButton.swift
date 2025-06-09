@@ -33,16 +33,6 @@ struct MonthCalendarButton<Label: View>: View {
         .sheet(isPresented: $showPicker) {
             NavigationView {
                 VStack(spacing: 20) {
-                    // 헤더
-                    HStack {
-                        Text("날짜 선택")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                        Spacer()
-                    }
-                    .padding(.horizontal)
-                    .padding(.top)
-                    
                     // 날짜 피커
                     DatePicker(
                         "날짜 선택",
@@ -57,17 +47,13 @@ struct MonthCalendarButton<Label: View>: View {
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("취소") {
-                            showPicker = false
-                        }
-                    }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("확인") {
+                        Button(action: {
                             showPicker = false
                             onDateSelected(selectedDate)
-                        }
-                        .fontWeight(.semibold)
+                        }) {
+                           Image(systemName: "arrow.right")
+                        }.fontWeight(.semibold)
                     }
                 }
             }
