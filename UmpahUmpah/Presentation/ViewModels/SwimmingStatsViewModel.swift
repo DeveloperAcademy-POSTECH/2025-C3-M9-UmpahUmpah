@@ -16,6 +16,8 @@ final class SwimmingStatsViewModel: ObservableObject {
         case hasData
     }
 
+    private var hk = HealthKitManager.shared
+
     @Published var workouts: [SwimmingWorkout] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -55,13 +57,13 @@ final class SwimmingStatsViewModel: ObservableObject {
     func loadSwimmingData(for date: Date) async {
         // 입력된 날짜로 startDate 설정
         startDate = date
-        
+
         // 데이터 로드
         await loadStats()
-        
+
         // 선택된 워크아웃에 대한 점수 업데이트
         await updateScoreForSelectedWorkout()
-        
+
         // 스트로크 데이터 로드
         await loadStrokeData()
     }
@@ -69,21 +71,21 @@ final class SwimmingStatsViewModel: ObservableObject {
     func loadLatestSwimmingData() async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             var calendar = Calendar(identifier: .gregorian)
             calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
-            
+
             // 최근 1년간 워크아웃 조회
             let workouts = try await repository.fetchSwimmingWorkouts(
                 start: calendar.date(byAdding: .year, value: -1, to: Date())!,
                 end: Date(),
                 strokeType: nil
             )
-            
+
             // 시작 날짜 기준으로 내림차순 정렬
             let sortedWorkouts = workouts.sorted { $0.startDate > $1.startDate }
-            
+
             // 가장 최근 워크아웃 날짜 (n=1)
             if let latestDate = sortedWorkouts.first?.startDate {
                 await loadSwimmingData(for: latestDate)
@@ -97,30 +99,30 @@ final class SwimmingStatsViewModel: ObservableObject {
             currentState = .noPermission
             isLoading = false
         }
-        
+
         updateCurrentState()
     }
 
     func loadSecondLatestSwimmingData() async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             var calendar = Calendar(identifier: .gregorian)
             calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
-            
+
             // 최근 1년간 워크아웃 조회
             let workouts = try await repository.fetchSwimmingWorkouts(
                 start: calendar.date(byAdding: .year, value: -1, to: Date())!,
                 end: Date(),
                 strokeType: nil
             )
-            
+
             // 시작 날짜 기준으로 내림차순 정렬
             let sortedWorkouts = workouts.sorted { $0.startDate > $1.startDate }
-            
+
             // 두 번째로 최근 워크아웃 날짜 (n=2)
-            if sortedWorkouts.count >= 2{
+            if sortedWorkouts.count >= 2 {
                 let secondLatestDate = sortedWorkouts[1].startDate
                 await loadSwimmingData(for: secondLatestDate)
             } else {
@@ -133,20 +135,28 @@ final class SwimmingStatsViewModel: ObservableObject {
             currentState = .noPermission
             isLoading = false
         }
-        
+
         updateCurrentState()
     }
 
     private func updateCurrentState() {
-        if isLoading {
-            currentState = .loading
-        } else if let error = errorMessage,
-                  error.contains("authorization") || error.contains("권한") {
+        let status = hk.authorizationState
+        print("healthKit permission status: \(status)")
+        switch status {
+        case .denied:
             currentState = .noPermission
-        } else if currentDailyInfo == nil {
-            currentState = .noWorkout
-        } else {
-            currentState = .hasData
+        default:
+            if isLoading {
+                currentState = .loading
+            } else if let error = errorMessage,
+                      error.contains("authorization") || error.contains("권한")
+            {
+                currentState = .noPermission
+            } else if currentDailyInfo == nil {
+                currentState = .noWorkout
+            } else {
+                currentState = .hasData
+            }
         }
     }
 
