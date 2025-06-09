@@ -1,53 +1,53 @@
 //
-//  MonthCalendar.swift
+//  MonthCalendarButtonT.swift
 //  UmpahUmpah
 //
-//  Created by chang hyen yun on 6/7/25.
+//  Created by chang hyen yun on 6/9/25.
 //
 
 import SwiftUI
 
-struct MonthCalendarButton<Label: View>:View {
-    @State var selectedDate: Date = Date()
+struct MonthCalendarButton<Label: View>: View {
+    @State private var selectedDate: Date = Date()
     @State private var showPicker: Bool = false
     let onDateSelected: (Date) -> Void
     let label: () -> Label
     
-    // 초기 날짜를 설정할 수 있는 이니셜라이저
     init(
         initialDate: Date = Date(),
         onDateSelected: @escaping (Date) -> Void,
         @ViewBuilder label: @escaping () -> Label
-    ) {
+    ){
         self._selectedDate = State(initialValue: initialDate)
         self.onDateSelected = onDateSelected
         self.label = label
     }
     
+    
     var body: some View {
         Button(action: {
             showPicker.toggle()
         }) {
-            label()
+           label()
         }
-        .popover(isPresented: $showPicker) {
-            GeometryReader { geometry in
-                VStack(alignment: .leading, spacing: 16){
-                    Button(action: {
-                        showPicker = false
-                        onDateSelected(selectedDate)
-                    }){
-                        Image(systemName: "xmark")
-                            .imageScale(.large)
-                            .padding()
-                            .foregroundStyle(.black)
+        .sheet(isPresented: $showPicker) {
+            NavigationView {
+                VStack(spacing: 20) {
+                    // 헤더
+                    HStack {
+                        Text("날짜 선택")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Spacer()
                     }
-                    .padding(.top)
                     .padding(.horizontal)
+                    .padding(.top)
                     
+                    // 날짜 피커
                     DatePicker(
                         "날짜 선택",
                         selection: $selectedDate,
+                        in: ...Date(), // 오늘까지만 선택 가능
                         displayedComponents: [.date]
                     )
                     .datePickerStyle(.graphical)
@@ -55,25 +55,38 @@ struct MonthCalendarButton<Label: View>:View {
                     
                     Spacer()
                 }
-                .frame(width: .infinity,
-                       height: .infinity)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("취소") {
+                            showPicker = false
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("확인") {
+                            showPicker = false
+                            onDateSelected(selectedDate)
+                        }
+                        .fontWeight(.semibold)
+                    }
+                }
             }
+            .presentationDetents([.height(500), .large]) // 높이 제한
+            .presentationDragIndicator(.visible)
         }
     }
 }
-#Preview("기본 스타일") {
+
+#Preview ("월간 달력") {
     VStack(spacing: 20) {
         MonthCalendarButton(
             onDateSelected: { date in
                 print("선택된 날짜: \(date)")
             }
         ) {
-            Text("날짜 선택")
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
+            Image(systemName: "calendar")
+                .imageScale(.large)
+                .foregroundStyle(.white)
         }
-    }
-    .padding()
+    }.padding(.trailing, 20)
 }
