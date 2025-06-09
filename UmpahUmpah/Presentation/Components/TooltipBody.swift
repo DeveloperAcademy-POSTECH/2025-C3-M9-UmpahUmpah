@@ -11,23 +11,20 @@ struct TooltipBody: View {
                 .font(.callout)
                 .fontWeight(.bold)
                 .padding(.bottom, 5)
+                .foregroundStyle(.white)
             Text(text)
                 .font(.callout)
+                .foregroundStyle(.white)
         }
         .padding(.horizontal, 15)
         .padding(.vertical, 10)
         .frame(minWidth: 300, minHeight: 150)
         .background(
             Rectangle()
-                .fill(.subLigtGray)
+                .fill(.black.opacity(0.9))
         )
         .cornerRadius(15)
         .shadow(radius: 2)
-        .overlay(
-            RoundedRectangle(cornerRadius: 15)
-                .stroke(.white.opacity(0.2), lineWidth: 1)
-        )
-        .opacity(0.9)
         
     }
 }
