@@ -15,6 +15,7 @@ struct MainView: View {
     @State private var selectedDate: Date = Date()
     
     
+    
     var body: some View {
         VStack {
             VStack(spacing: 0) {
@@ -33,6 +34,8 @@ struct MainView: View {
                             .foregroundStyle(.white)
                     }).padding(.trailing, 20)
                 }.background(.brand)
+                
+                
                 WeeklyCalendar(baseDate: selectedDate, onDateSelected: { date in
                     swimmingStatsViewModel.startDate = date
                     Task {
@@ -44,7 +47,9 @@ struct MainView: View {
                     swimmingStatsViewModel.startDate = today
                     Task {
                         await swimmingStatsViewModel.loadStats()
+                        
                     }
+                    
                 }
                 
                 switch swimmingStatsViewModel.currentState {
@@ -61,7 +66,6 @@ struct MainView: View {
                     Spacer()
                     
                 case .noWorkout:
-                    
                     Spacer()
                     Text("이 날은 수영 기록이 없어요!\n🏊")
                         .font(.system(size: 16, weight: .medium))
@@ -69,11 +73,13 @@ struct MainView: View {
                         .multilineTextAlignment(.center)
                     Spacer()
                     
+                    
                 case .hasData:
                     SwimMetricGridView()
                         .padding(.horizontal, 16)
                         .padding(.vertical, 18)
                 }
+                
             }
         }
     }
