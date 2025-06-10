@@ -12,6 +12,8 @@ struct MainView: View {
     @StateObject private var chartViewModel = ChartViewModel()
     @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
     @State private var isDataEmpty = false
+    @State private var selectedDate: Date = Date()
+    
     
     
     var body: some View {
@@ -20,19 +22,17 @@ struct MainView: View {
                 // MARK: Header Section
                 HStack {
                     HeaderSectionView(dateText:Date().formattedTodayDate(),  message: "오늘도 음파음파")
-                    MonthCalendarButton(onDateSelected: { selectedDate in
-                        swimmingStatsViewModel.startDate = selectedDate
+                    MonthCalendarButton( initialDate: selectedDate, onDateSelected: { date in
+                        selectedDate = date
+                        swimmingStatsViewModel.startDate = date
                         Task {
                             await swimmingStatsViewModel.loadStats()
-                            
                         }
-                        
                     }, label:{
                         Image(systemName: "calendar")
                             .imageScale(.large)
                             .foregroundStyle(.white)
                     }).padding(.trailing, 20)
-                    
                 }.background(.brand)
                 
                 

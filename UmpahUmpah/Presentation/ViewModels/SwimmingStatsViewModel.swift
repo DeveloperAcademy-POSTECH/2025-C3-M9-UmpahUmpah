@@ -15,6 +15,7 @@ final class SwimmingStatsViewModel: ObservableObject {
         case noWorkout
         case hasData
     }
+
     
     enum ComparisonState {
         case noDataAtAll        // 기록 자체가 없음
@@ -23,6 +24,8 @@ final class SwimmingStatsViewModel: ObservableObject {
         case compareReady       // 비교 가능 (오늘 기록도 있고, 과거 기록도 있고)
     }
     
+	
+	private var hk = HealthKitManager.shared
     @Published var workouts: [SwimmingWorkout] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -103,13 +106,13 @@ final class SwimmingStatsViewModel: ObservableObject {
     func loadSwimmingData(for date: Date) async {
         // 입력된 날짜로 startDate 설정
         startDate = date
-        
+
         // 데이터 로드
         await loadStats()
-        
+
         // 선택된 워크아웃에 대한 점수 업데이트
         await updateScoreForSelectedWorkout()
-        
+
         // 스트로크 데이터 로드
         await loadStrokeData()
     }
@@ -118,7 +121,7 @@ final class SwimmingStatsViewModel: ObservableObject {
     func loadLatestTwoSummaries() async {
         isLoading = true
         errorMessage = nil
-        
+
         do {
             var calendar = Calendar(identifier: .gregorian)
             calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
@@ -148,15 +151,23 @@ final class SwimmingStatsViewModel: ObservableObject {
     
     
     private func updateCurrentState() {
-        if isLoading {
-            currentState = .loading
-        } else if let error = errorMessage,
-                  error.contains("authorization") || error.contains("권한") {
+        let status = hk.authorizationState
+        print("healthKit permission status: \(status)")
+        switch status {
+        case .denied:
             currentState = .noPermission
-        } else if currentDailyInfo == nil {
-            currentState = .noWorkout
-        } else {
-            currentState = .hasData
+        default:
+            if isLoading {
+                currentState = .loading
+            } else if let error = errorMessage,
+                      error.contains("authorization") || error.contains("권한")
+            {
+                currentState = .noPermission
+            } else if currentDailyInfo == nil {
+                currentState = .noWorkout
+            } else {
+                currentState = .hasData
+            }
         }
     }
     
