@@ -11,6 +11,7 @@ import SwiftUI
 struct VSScoreSectionView: View {
     var oldValue: Int
     var newValue: Int
+    var noData: String = "--"
     
     init(oldValue: Double, newValue: Double) {
         self.oldValue = Int(oldValue)
@@ -18,7 +19,7 @@ struct VSScoreSectionView: View {
     }
     
     var body: some View {
-        HStack(){
+        HStack {
             VStack{
                 Text("이전 점수")
                     .fontWeight(.bold)
@@ -26,7 +27,7 @@ struct VSScoreSectionView: View {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.white)
                     
-                    Text("\(self.oldValue)")
+                    Text(self.oldValue == 0 ? noData : String(self.oldValue))
                         .foregroundStyle(.subGray)
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -45,7 +46,7 @@ struct VSScoreSectionView: View {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.white)
                     
-                    Text("\(self.newValue)")
+                    Text(self.newValue == 0 ? noData : String(self.newValue))
                         .foregroundStyle(.accent2)
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -60,4 +61,8 @@ struct VSScoreSectionView: View {
         .background(Color("BrandColor"))
         .frame(maxWidth: .infinity)
     }
+}
+
+#Preview {
+    VSScoreSectionView(oldValue: 0.0, newValue: 0.0)
 }
