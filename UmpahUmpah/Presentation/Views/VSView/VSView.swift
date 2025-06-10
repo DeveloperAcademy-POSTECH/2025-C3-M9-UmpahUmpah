@@ -1,184 +1,176 @@
 import SwiftUI
 
 struct VSView: View {
-    @StateObject private var viewModel = VSFeedbackViewModel(
+    @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
+    @StateObject private var feedbackViewModel = VSFeedbackViewModel(
         useCase: RequestFeedbackUseCaseImpl(repository: ChatGPTRepositoryImpl())
     )
-  
-    @EnvironmentObject var swimmingStatsViewModel: SwimmingStatsViewModel
-    @StateObject var oldSwimmingStatsViewModel: SwimmingStatsViewModel = SwimmingStatsViewModel()
-    @StateObject var newSwimmingStatsViewModel: SwimmingStatsViewModel = SwimmingStatsViewModel()
-    
-
-    
-    // API 테스트용 목업 데이터
-    private var mockDailyInfo: DailySwimmingInfo {
-        let mockWorkout = SwimmingWorkout(
-            id: UUID(),
-            startDate: Date().addingTimeInterval(-3600), // 1시간 전
-            endDate: Date(),
-            duration: 3600, // 1시간
-            distance: 1500, // 1.5km
-            energy: 450, // 450kcal
-            lapCount: 30
-        )
-        
-        let mockScore = SwimmingScore(
-            stabilityScore: 85.5,
-            strokeEfficiency: 2.1,
-            immersionScore: 78.3
-        )
-        
-        let mockHeartRates = [
-            HeartRateSample(bpm: 140, date: Date().addingTimeInterval(-1800)),
-            HeartRateSample(bpm: 150, date: Date().addingTimeInterval(-900)),
-            HeartRateSample(bpm: 145, date: Date())
-        ]
-        
-        let mockStrokeInfos = [
-            StrokeInfo(
-                start: Date().addingTimeInterval(-3600),
-                end: Date().addingTimeInterval(-1800),
-                count: 450,
-                style: .freestyle
-            )
-        ]
-        
-        return DailySwimmingInfo(
-            date: Calendar.current.startOfDay(for: Date()),
-            workout: mockWorkout,
-            score: mockScore,
-            heartRates: mockHeartRates,
-            strokeInfos: mockStrokeInfos,
-            overallScore: 82.5
-        )
-    }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                // MARK: VS 점수 헤더
+        // MARK: View 분기 처리
+        Group {
+            switch swimmingStatsViewModel.comparisonState {
+            case .noDataAtAll:
+                VStack {
+                    VSScoreSectionView(oldValue: 0.0, newValue: 0.0)
+                    Spacer()
+                    Text("오늘도 과거도 수영 기록이 없어요\n🏊")
+                        .font(.system(size: 16))
+                        .foregroundColor(.subGray)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 20)
+                    Spacer()
+                }
                 
-                VSScoreSectionView(oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 0.0,
-                                   newValue: newSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 0.0)
+            case .onlyPastExists:
+                VStack {
+                    VSScoreSectionView(oldValue: swimmingStatsViewModel.pastInfo?.overallScore ?? 0.0, newValue: 0.0)
+                    Spacer()
+                    Text("오늘 기록은 없지만,\n예전에 수영한 기록이 있어요! 📘")
+                        .font(.system(size: 16))
+                        .foregroundColor(.subGray)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 20)
+                    Spacer()
+                }
                 
-                // MARK: 펼치는 박스
+            case .todayOnly:
+                VStack {
+                    VSScoreSectionView(oldValue: 0.0, newValue: swimmingStatsViewModel.todayInfo?.overallScore ?? 0.0)
+                    Spacer()
+                    Text("과거 기록이 없어 비교할 수는 없지만,\n오늘의 기록만으로도 멋져요! 💪")
+                        .font(.system(size: 16))
+                        .foregroundColor(.subGray)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 20)
+                    Spacer()
+                }
                 
-                // 실제 데이터가 있으면 사용, 없으면 목업 데이터 사용
-                let dailyInfo = newSwimmingStatsViewModel.currentDailyInfo ?? mockDailyInfo
-                
-                ExpandableBox(
-                    viewModel: viewModel,
-                    swimData: dailyInfo
-                )
-                .padding(.vertical, 20)
-                
-                // MARK: 그래프들
-
-                VStack(){
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.stabilityScore ?? 1.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.stabilityScore ?? 1.0,
-                        title: "안정지수"
-                    )
-                    .padding(5)
-                    .zIndex(9)
-
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.strokeEfficiency ?? 1.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.strokeEfficiency ?? 1.0,
-                        title: "스트로크 효율성"
-                    )
-                    .padding(5)
-                    .zIndex(8)
-
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.score.immersionScore ?? 1.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.score.immersionScore ?? 1.0,
-                        title: "몰입도 점수"
-                    )
-                    .padding(5)
-                    .zIndex(7)
+            case .compareReady:
+                if let today = swimmingStatsViewModel.todayInfo,
+                   let past = swimmingStatsViewModel.pastInfo {
                     
-                    HorizontalGraph(
-                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1),
-                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.workout.pacePer100m ?? 1),
-                        title: "SWOLF"
-                    )
-                    .padding(5)
-                    .zIndex(6)
-                    
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.duration ?? 3600.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.duration ?? 3200.0,
-                        title: "운동시간"
-                    )
-                    .padding(5)
-                    .zIndex(5)
-
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.workout.distance ?? 100.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.workout.distance ?? 90.0,
-                        title: "총거리"
-                    )
-                    .padding(5)
-                    .zIndex(4)
-
-                    HorizontalGraph(
-                        oldValue: oldSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
-                        newValue: newSwimmingStatsViewModel.dailySummaries.first?.overallScore ?? 1.0,
-                        title: "칼로리"
-                    )
-                    .padding(5)
-                    .zIndex(3)
-
-                    HorizontalGraph(
-                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 1),
-                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.workout.lapCount ?? 1),
-                        title: "랩수"
-                    )
-                    .padding(5)
-                    .zIndex(2)
-
-                    HorizontalGraph(
-                        oldValue: Double(oldSwimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 1.0),
-                        newValue: Double(newSwimmingStatsViewModel.dailySummaries.first?.averageHeartRate ?? 1.0),
-                        title: "심박수"
-                    )
-                    .padding(5)
-                    .zIndex(1)
-
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            // MARK: VS 점수 헤더, 데이터 없는 경우 -- 표시
+                            
+                            VSScoreSectionView(oldValue: past.overallScore,
+                                               newValue: today.overallScore)
+                            
+                            // MARK: 펼치는 박스
+                            ExpandableBox(
+                                viewModel: feedbackViewModel,
+                                swimData: today
+                            )
+                            .padding(.vertical, 20)
+                            
+                            // MARK: 그래프들
+                            
+                            VStack {
+                                HorizontalGraph(
+                                    oldValue: past.score.stabilityScore,
+                                    newValue: today.score.stabilityScore,
+                                    title: "안정지수"
+                                )
+                                .padding(5)
+                                .zIndex(9)
+                                
+                                HorizontalGraph(
+                                    oldValue: past.score.strokeEfficiency,
+                                    newValue: today.score.strokeEfficiency,
+                                    title: "스트로크 효율성"
+                                )
+                                .padding(5)
+                                .zIndex(8)
+                                
+                                HorizontalGraph(
+                                    oldValue: past.score.immersionScore,
+                                    newValue: today.score.immersionScore,
+                                    title: "몰입도 점수"
+                                )
+                                .padding(5)
+                                .zIndex(7)
+                                
+                                HorizontalGraph(
+                                    oldValue: Double(past.workout.pacePer100m),
+                                    newValue: Double(today.workout.pacePer100m),
+                                    title: "SWOLF"
+                                )
+                                .padding(5)
+                                .zIndex(6)
+                                
+                                HorizontalGraph(
+                                    oldValue: past.workout.duration,
+                                    newValue: today.workout.duration,
+                                    title: "운동시간"
+                                )
+                                .padding(5)
+                                .zIndex(5)
+                                
+                                HorizontalGraph(
+                                    oldValue: past.workout.distance,
+                                    newValue: today.workout.distance,
+                                    title: "총거리"
+                                )
+                                .padding(5)
+                                .zIndex(4)
+                                
+                                HorizontalGraph(
+                                    oldValue: past.overallScore,
+                                    newValue: today.overallScore,
+                                    title: "칼로리"
+                                )
+                                .padding(5)
+                                .zIndex(3)
+                                
+                                HorizontalGraph(
+                                    oldValue: Double(past.workout.lapCount),
+                                    newValue: Double(today.workout.lapCount),
+                                    title: "랩수"
+                                )
+                                .padding(5)
+                                .zIndex(2)
+                                
+                                HorizontalGraph(
+                                    oldValue: Double(past.averageHeartRate ?? 1.0),
+                                    newValue: Double(today.averageHeartRate ?? 1.0),
+                                    title: "심박수"
+                                )
+                                .padding(5)
+                                .zIndex(1)
+                            }
+                            
+                        }
+                        .padding(.bottom, 100)
+                    }
+                    .alert("네트워크 오류", isPresented: $feedbackViewModel.showErrorAlert) {
+                        Button("확인") {
+                            feedbackViewModel.showErrorAlert = false
+                        }
+                        Button("재시도") {
+                            if let todayInfo = swimmingStatsViewModel.todayInfo {
+                                feedbackViewModel.fetchFeedback(from: todayInfo)
+                            }
+                        }
+                    } message: {
+                        Text(feedbackViewModel.errorMessage ?? "")
+                    }
+                    .ignoresSafeArea(edges: .top)
                     
                 }
+                
             }
-            .padding(.bottom, 100)
         }
-        .ignoresSafeArea(edges: .top)
         .onAppear {
-            viewModel.loadTodayFeedback()
             Task {
-                // oldSwimmingStatsViewModel은 두 번째로 최근 데이터 로드
-                await oldSwimmingStatsViewModel.loadSecondLatestSwimmingData()
-                // newSwimmingStatsViewModel은 가장 최근 데이터 로드
-                await newSwimmingStatsViewModel.loadLatestSwimmingData()
+                await swimmingStatsViewModel.loadLatestTwoSummaries()
+                feedbackViewModel.loadTodayFeedback()
             }
-        }
-        .alert("네트워크 오류", isPresented: $viewModel.showErrorAlert) {
-            Button("확인") {
-                viewModel.showErrorAlert = false
-            }
-            Button("재시도") {
-                let dailyInfo = swimmingStatsViewModel.currentDailyInfo ?? mockDailyInfo
-                viewModel.fetchFeedback(from: dailyInfo)
-            }
-        } message: {
-            Text(viewModel.errorMessage ?? "")
-        }
-        .ignoresSafeArea()
+        }  
     }
 }
 
-
 #Preview {
     VSView()
+        .environmentObject(SwimmingStatsViewModel())
 }

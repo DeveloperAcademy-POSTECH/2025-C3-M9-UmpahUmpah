@@ -20,7 +20,7 @@ struct VSScoreSectionView: View {
     
     var body: some View {
         HStack {
-            VStack{
+            VStack {
                 Text("이전 점수")
                     .fontWeight(.bold)
                 ZStack{
@@ -60,6 +60,7 @@ struct VSScoreSectionView: View {
         .foregroundStyle(.white)
         .background(Color("BrandColor"))
         .frame(maxWidth: .infinity)
+        .frame(height: 80)
     }
 }
 
