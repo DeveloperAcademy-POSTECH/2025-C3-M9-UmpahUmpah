@@ -16,9 +16,11 @@ struct WeeklyCalendarView: View {
     
     private let today = Date()
 
+    @Binding var selectedDate: Date
     let onDateSelected: (Date) -> Void
-    @State private var selectedDate: Date? = Date()
-
+    
+    
+    
     // 오늘 기준으로 왼쪽으로 6일
     private var weekDates: [Date] {
         (0 ..< 7).compactMap { offset in
@@ -46,10 +48,7 @@ struct WeeklyCalendarView: View {
     }
 
     private func isSelected(_ date: Date) -> Bool {
-        if let selectedDate = selectedDate {
-            return calendar.isDate(date, inSameDayAs: selectedDate)
-        }
-        return false
+        calendar.isDate(date, inSameDayAs: selectedDate)
     }
 
     var body: some View {
@@ -74,8 +73,8 @@ struct WeeklyCalendarView: View {
                 )
                 .onTapGesture {
                     selectedDate = date
-                    let startOfDay = calendar.startOfDay(for: date)
-                    onDateSelected(startOfDay)
+                    //let startOfDay = calendar.startOfDay(for: date)
+                    onDateSelected(date)
                 }            }
         }
         .padding(.bottom, 10)
@@ -85,9 +84,9 @@ struct WeeklyCalendarView: View {
     }
 }
 
-#Preview {
-    WeeklyCalendarView { selectedDate in
-        print("날짜 선택됨: \(selectedDate)")
-    }
-}
+//#Preview {
+//    WeeklyCalendarView { selectedDate in
+//        print("날짜 선택됨: \(selectedDate)")
+//    }
+//}
 

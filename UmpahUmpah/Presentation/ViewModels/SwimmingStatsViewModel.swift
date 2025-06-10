@@ -180,6 +180,7 @@ final class SwimmingStatsViewModel: ObservableObject {
         updateCurrentState()
     }
     
+    @MainActor
     func loadStats() async {
         isLoading = true
         errorMessage = nil
