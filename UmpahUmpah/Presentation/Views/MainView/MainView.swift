@@ -36,23 +36,20 @@ struct MainView: View {
                 }.background(.brand)
                 
                 
-                WeeklyCalendarView(
-                    selectedDate: $swimmingStatsViewModel.startDate,
-                    onDateSelected: { date in
-                        swimmingStatsViewModel.startDate = date
-                        Task {
-                            await swimmingStatsViewModel.loadStats()
-                        }
+                WeeklyCalendar(baseDate: selectedDate, onDateSelected: { date in
+                    swimmingStatsViewModel.startDate = date
+                    Task {
+                        await swimmingStatsViewModel.loadStats()
                     }
-                )
+                })
                 .onAppear {
                     let today = Calendar.current.startOfDay(for: Date())
-                            swimmingStatsViewModel.startDate = today
-                            Task {
-                                await swimmingStatsViewModel.loadStats()
-                                
-                            }
+                    swimmingStatsViewModel.startDate = today
+                    Task {
+                        await swimmingStatsViewModel.loadStats()
                         
+                    }
+                    
                 }
                 
                 switch swimmingStatsViewModel.currentState {
