@@ -43,12 +43,14 @@ struct MainView: View {
                     }
                 })
                 .onAppear {
-                    let today = Calendar.current.startOfDay(for: Date())
-                    swimmingStatsViewModel.startDate = today
-                    Task {
-                        await swimmingStatsViewModel.loadStats()
-                        
+                    if !swimmingStatsViewModel.didLoad {
+                        let today = Calendar.current.startOfDay(for: Date())
+                        swimmingStatsViewModel.startDate = today
+                        Task {
+                            await swimmingStatsViewModel.loadStatsOnce()
+                        }
                     }
+                    
                     
                 }
                 
@@ -77,7 +79,7 @@ struct MainView: View {
                 case .hasData:
                     SwimMetricGridView()
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 18)
+                        .padding(.vertical, 12)
                 }
                 
             }
