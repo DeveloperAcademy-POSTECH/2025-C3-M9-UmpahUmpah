@@ -37,6 +37,3 @@ struct SwimMetricGridView: View {
     }
 }
 
-//#Preview {
-//    SwimMetricGridView(chartViewModel: ChartViewModel(), swimmingStatsViewModel: SwimmingStatsViewModel())
-//}
