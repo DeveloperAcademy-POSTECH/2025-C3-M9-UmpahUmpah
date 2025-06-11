@@ -70,7 +70,7 @@ struct weekDayCell: View {
     
     // 배경 선색
     private var borderColor: Color {
-        isToday ? .orange : .clear
+        isToday ? .accent1 : .clear
     }
     
 }
