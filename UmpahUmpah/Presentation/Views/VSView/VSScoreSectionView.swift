@@ -54,13 +54,16 @@ struct VSScoreSectionView: View {
                 }
             }
         }
-        .padding(.top, 80) // Safe Area 고려
+        
+        .frame(maxWidth: .infinity)
+        .frame(height: 80)
+        .ignoresSafeArea()
+        .padding(.top, 30)
         .padding(.bottom, 20)
         .padding(.horizontal, 15)
         .foregroundStyle(.white)
         .background(Color("BrandColor"))
-        .frame(maxWidth: .infinity)
-        .frame(height: 80)
+       
     }
 }
 

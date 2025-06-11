@@ -26,6 +26,8 @@ final class SwimmingStatsViewModel: ObservableObject {
     
 	
 	private var hk = HealthKitManager.shared
+    @Published var didLoad = false
+    
     @Published var workouts: [SwimmingWorkout] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -189,6 +191,12 @@ final class SwimmingStatsViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
         updateCurrentState()
+    }
+    
+    func loadStatsOnce() async {
+            guard !didLoad else { return }
+            didLoad = true
+            await loadStats()
     }
     
     @MainActor
